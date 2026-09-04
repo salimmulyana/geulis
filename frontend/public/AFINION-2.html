@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Alat Abbott Afinion 2 — GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+      font-size: 0.85em;
+      line-height: 1.45;
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    td code { font-size: 0.85em; }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.1);
+      border-left-color: #ef4444;
+    }
+    .subtitle { color: var(--text-muted); margin-top: -0.5rem; }
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+    }
+    .toc ol { margin: 0.5rem 0; padding-left: 1.2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    ol li, ul li { margin: 0.3rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .footer { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+    .print-btn {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .print-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.2cm; }
+      body { background: #fff; color: #000; padding: 0; }
+      .container {
+        max-width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #000; box-shadow: none; border-radius: 0;
+      }
+      h1 { color: #000; border-bottom-color: #000; }
+      h2 { color: #000; border-bottom-color: #999; page-break-after: avoid; }
+      h3 { color: #000; page-break-after: avoid; }
+      p, li, strong, td, th, .subtitle { color: #000 !important; }
+      a { color: #000; text-decoration: none; }
+      pre {
+        background: #f4f4f4; color: #000; border: 1px solid #bbb;
+        page-break-inside: avoid; font-size: 0.75em;
+      }
+      code { background: #eee; color: #000; }
+      th { background: #e8e8e8 !important; color: #000; }
+      table, tr, img { page-break-inside: avoid; }
+      .toc { background: #f7f7f7; border: 1px solid #bbb; }
+      .toc a { color: #000; }
+      .alert, .alert.info, .alert.danger { background: #f7f7f7 !important; border-left: 4px solid #888; color: #000; }
+      .print-btn, .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button class="print-btn" onclick="window.print()">🖨️ Cetak</button>
+
+  <h1>Manual Alat — Abbott Afinion 2</h1>
+  <p class="subtitle">Analyzer <em>point-of-care</em> berbasis kartrid · didaftarkan di GeuLIS sebagai <code>AFN001</code></p>
+
+  <div class="alert">
+    <strong>⚠️ Status pemasangan: belum tersambung.</strong>
+    Per 4 September 2026 alat ini <strong>belum masuk jaringan</strong>. Setelan di layarnya
+    sudah menunjukkan <code>192.168.1.8</code>, tetapi alamat itu tidak menjawab ARP dan tidak
+    muncul saat seluruh <code>192.168.1.0/24</code> disapu — padahal 40+ perangkat lain menyahut.
+    Selesaikan <a href="#belum">Bagian 8</a> lebih dulu; sebelum itu, setelan lain belum ada gunanya.
+  </div>
+
+  <div class="toc">
+    <strong>Daftar Isi</strong>
+    <ol>
+      <li><a href="#koneksi">Cara alat terhubung ke GeuLIS</a></li>
+      <li><a href="#jaringan">Setting jaringan di alat</a></li>
+      <li><a href="#lis">Setting LIS di alat</a></li>
+      <li><a href="#daftar">Pendaftaran di GeuLIS</a></li>
+      <li><a href="#pemeriksaan">Pemeriksaan yang bisa dikerjakan</a></li>
+      <li><a href="#hba1c">HbA1c: dua satuan dan ambang keputusan</a></li>
+      <li><a href="#qc">Kontrol mutu</a></li>
+      <li><a href="#belum">Kalau alat tidak terlihat di jaringan</a></li>
+      <li><a href="#masalah">Kalau hasil tidak masuk ke GeuLIS</a></li>
+    </ol>
+  </div>
+
+  <h2 id="koneksi">1. Cara alat terhubung ke GeuLIS</h2>
+  <p>
+    <strong>Alat yang menghubungi GeuLIS, bukan sebaliknya.</strong> Ini kebalikan dari kedua
+    BC-3600 di lab yang sama, dan perbedaan itu penting: di menu Afinion 2 yang diisi adalah
+    <em>Server IP</em> dan <em>Port</em> — yaitu alamat GeuLIS, bukan alamat alat.
+  </p>
+<pre>Afinion 2 192.168.1.8  ──menghubungi──▶  GeuLIS 192.168.1.14:5005
+                       ──kirim hasil ASTM──▶
+                       ◀── ACK</pre>
+  <p>
+    Konsekuensinya untuk penelusuran masalah: GeuLIS hanya <em>menunggu</em>. Kalau tidak ada
+    hasil yang masuk, sumber masalahnya hampir selalu di sisi alat atau jaringan, bukan di LIS.
+  </p>
+
+  <div class="alert info">
+    <strong>Kenapa port 5005?</strong> Port itu sudah diizinkan di firewall server sejak
+    pengerasan keamanan 3 September 2026, jadi tidak perlu membuka lubang baru. Pemakai
+    sebelumnya, Sysmex XN-330, sudah dinonaktifkan.
+  </div>
+
+  <h2 id="jaringan">2. Setting jaringan di alat</h2>
+  <p>Menu <strong>General settings › Network</strong>:</p>
+  <table>
+    <tr><th>Isian</th><th>Nilai</th><th>Alasan</th></tr>
+    <tr><td>DHCP</td><td><strong>mati</strong></td><td>Alamat alat harus tetap. Kalau berubah sendiri, GeuLIS tidak terpengaruh (alat yang menghubungi), tetapi penelusuran masalah jadi jauh lebih sulit.</td></tr>
+    <tr><td>IP Address</td><td><code>192.168.1.8</code></td><td>Satu subnet dengan server.</td></tr>
+    <tr><td>Network mask</td><td><code>255.255.255.0</code></td><td>—</td></tr>
+    <tr><td>Gateway</td><td><code>192.168.1.1</code></td><td>Lihat peringatan di bawah.</td></tr>
+    <tr><td>Web server</td><td><strong>hidup</strong></td><td>Membuka <code>http://192.168.1.8</code> dari server memperlihatkan identitas dan status alat. Sangat membantu saat menelusuri masalah.</td></tr>
+  </table>
+
+  <div class="alert">
+    <strong>Gateway jangan dibiarkan <code>0.0.0.0</code>.</strong> Dengan gateway kosong, alat
+    hanya bisa bicara dengan perangkat di subnetnya sendiri. Saat ini kebetulan tidak masalah
+    karena server ada di <code>192.168.1.14</code> — satu subnet. Tetapi kalau suatu saat server
+    dipindah ke jaringan lain, alat ini akan diam tanpa gejala yang bisa dilihat: layarnya normal,
+    lampu LAN menyala, hasil tetap tidak sampai.
+  </div>
+
+  <h2 id="lis">3. Setting LIS di alat</h2>
+  <p>Menu <strong>General settings › Connectivity settings</strong>:</p>
+  <table>
+    <tr><th>Isian</th><th>Nilai</th></tr>
+    <tr><td>Protocol</td><td><strong>ASTM LL</strong></td></tr>
+    <tr><td>Results</td><td>Patient and quality control</td></tr>
+    <tr><td>Server IP</td><td><code>192.168.1.14</code></td></tr>
+    <tr><td>Port</td><td><code>5005</code></td></tr>
+    <tr><td>Receiving Application</td><td><code>GEULIS</code></td></tr>
+  </table>
+
+  <p>
+    Afinion 2 menyediakan empat protokol: <strong>ASTM LL</strong> (ASTM E1381-95, lapis bawah,
+    memakai jabat tangan <code>ENQ</code>/<code>ACK</code>), <strong>ASTM HL</strong>
+    (ASTM E1394-97, isi rekamannya saja), <strong>HL7</strong> versi 2.4, dan
+    <strong>POCT1-A</strong>.
+  </p>
+  <p>
+    Pakai <strong>ASTM LL</strong> lebih dulu — itu perilaku analyzer yang paling lazim dan
+    GeuLIS sudah membalas <code>ENQ</code> dengan <code>ACK</code>. Kalau setelah percobaan
+    kiriman tidak ada apa pun yang masuk ke log, ganti ke <strong>ASTM HL</strong>; GeuLIS
+    menangani keduanya.
+  </p>
+
+  <div class="alert info">
+    <strong>POCT1-A jangan dipilih.</strong> Protokol itu bukan sekadar format pesan melainkan
+    percakapan bertahap (perkenalan perangkat, pertukaran topik, daftar operator, penguncian alat),
+    dan GeuLIS belum berbicara POCT1-A. Memilihnya akan membuat alat menyambung lalu diam.
+  </div>
+
+  <h2 id="daftar">4. Pendaftaran di GeuLIS</h2>
+  <p>Menu <strong>Alat</strong> → tambah:</p>
+  <table>
+    <tr><th>Kolom</th><th>Nilai</th></tr>
+    <tr><td>Kode</td><td><code>AFN001</code></td></tr>
+    <tr><td>Nama</td><td>Abbott Afinion 2</td></tr>
+    <tr><td>Protokol</td><td><code>astm</code></td></tr>
+    <tr><td>Mode koneksi</td><td><code>server</code> — GeuLIS menunggu, alat yang menghubungi</td></tr>
+    <tr><td>Host</td><td><code>0.0.0.0</code></td></tr>
+    <tr><td>Port</td><td><code>5005</code></td></tr>
+    <tr><td>Aktif</td><td>ya</td></tr>
+  </table>
+
+  <div class="alert">
+    <strong>Pemetaan kode pemeriksaan belum bisa diisi sekarang.</strong> Kode yang dikirim
+    Afinion di dalam rekaman ASTM belum pernah dilihat, dan menebaknya berisiko: hasil yang
+    kodenya tidak dikenali akan masuk tanpa pemeriksaan tujuan lalu menggantung. Jalankan satu
+    sampel percobaan lebih dulu, buka <strong>Log Alat</strong>, baca kode aslinya dari pesan
+    yang masuk, baru isi pemetaannya. Cara ini yang dipakai saat memasang BC-3600 dan itulah
+    sebabnya pemetaannya benar, bukan kira-kira.
+  </div>
+
+  <h2 id="pemeriksaan">5. Pemeriksaan yang bisa dikerjakan</h2>
+  <p>
+    Afinion 2 memakai kartrid sekali pakai; jenis pemeriksaan ditentukan oleh kartrid, bukan
+    oleh setelan alat. Yang tersedia:
+  </p>
+  <table>
+    <tr><th>Kartrid</th><th>Hasil</th><th>Status di GeuLIS</th></tr>
+    <tr><td>HbA1c</td><td>HbA1c</td><td>Perlu ditambahkan (<a href="#hba1c">bagian 6</a>)</td></tr>
+    <tr><td>ACR</td><td>Albumin urin, kreatinin urin, dan rasionya</td><td>Belum didaftarkan</td></tr>
+    <tr><td>CRP</td><td>C-reactive protein</td><td>Belum didaftarkan</td></tr>
+    <tr><td>Lipid Panel</td><td>Kolesterol total, HDL, trigliserida, LDL hitung, non-HDL</td><td>Belum didaftarkan</td></tr>
+  </table>
+  <p>
+    Daftarkan hanya kartrid yang benar-benar dipakai. Tetapi kalau suatu saat kartrid baru
+    mulai dipakai, pemeriksaannya <strong>harus</strong> didaftarkan lebih dulu — kalau tidak,
+    hasilnya masuk ke log tanpa pemeriksaan tujuan dan tidak akan muncul di lembar hasil pasien.
+  </p>
+
+  <h2 id="hba1c">6. HbA1c: dua satuan dan ambang keputusan</h2>
+
+  <div class="alert danger">
+    <strong>HbA1c punya dua satuan yang angkanya sangat berbeda.</strong>
+    NGSP dalam persen (<code>6,5%</code>) dan IFCC dalam mmol/mol (<code>48 mmol/mol</code>)
+    adalah <em>nilai yang sama persis</em>. Banyak alat mengirim keduanya. Kalau keduanya masuk
+    ke pemeriksaan yang sama tanpa dibedakan, hasilnya berbahaya: angka 48 akan terbaca sebagai
+    kadar yang mustahil, atau lebih buruk, angka 6,5 mmol/mol terbaca sebagai kendali gula yang
+    sangat baik pada pasien yang sebenarnya tidak terkendali.
+  </div>
+  <p>
+    Tetapkan satu satuan saja untuk pemeriksaan <code>HBA1C</code> — <strong>persen (NGSP)</strong>,
+    karena itu yang dipakai klinisi di Indonesia. Kalau alat juga mengirim IFCC, buat pemeriksaan
+    terpisah dengan kode sendiri, jangan digabung.
+  </p>
+
+  <h3>Pendaftaran pemeriksaan</h3>
+  <table>
+    <tr><th>Kolom</th><th>Nilai</th></tr>
+    <tr><td>Kode</td><td><code>HBA1C</code></td></tr>
+    <tr><td>Nama</td><td>HbA1c</td></tr>
+    <tr><td>Satuan</td><td><code>%</code></td></tr>
+    <tr><td>Rujukan</td><td>4,0 – 5,6</td></tr>
+    <tr><td>Nilai kritis</td><td><em>kosongkan</em></td></tr>
+  </table>
+
+  <h3>Ambang keputusan</h3>
+  <p>
+    HbA1c bukan pemeriksaan dengan rentang normal biasa, melainkan dengan ambang keputusan
+    diagnostik:
+  </p>
+  <table>
+    <tr><th>Nilai</th><th>Tafsiran</th></tr>
+    <tr><td>&lt; 5,7%</td><td>Normal</td></tr>
+    <tr><td>5,7 – 6,4%</td><td>Prediabetes</td></tr>
+    <tr><td>&ge; 6,5%</td><td>Memenuhi kriteria diagnosis diabetes</td></tr>
+  </table>
+
+  <div class="alert">
+    <strong>Nilai kritis sengaja dikosongkan.</strong> HbA1c menggambarkan rata-rata gula darah
+    2–3 bulan terakhir, jadi tidak ada nilai yang menuntut tindakan dalam hitungan menit. Mengisi
+    ambang kritis di sini justru merugikan: alarm yang berbunyi untuk hal yang tidak mendesak
+    membuat petugas terbiasa mengabaikannya, dan kebiasaan itu terbawa saat kalium atau glukosa
+    yang benar-benar kritis muncul.
+  </div>
+
+  <h3>Kapan hasil HbA1c tidak boleh dipercaya</h3>
+  <p>
+    HbA1c mengukur hemoglobin yang terglikasi, sehingga apa pun yang mengubah umur sel darah
+    merah akan mengubah hasilnya tanpa ada kaitan dengan kadar gula:
+  </p>
+  <ul>
+    <li><strong>Anemia hemolitik, perdarahan, transfusi belakangan ini</strong> — hasil palsu rendah, karena sel darah merah belum sempat terglikasi.</li>
+    <li><strong>Anemia defisiensi besi</strong> — hasil cenderung palsu tinggi.</li>
+    <li><strong>Talasemia dan varian hemoglobin lain</strong> — cukup sering di Indonesia; hasilnya bisa menyimpang ke dua arah.</li>
+    <li><strong>Kehamilan dan gagal ginjal kronik</strong> — pergantian sel darah merah berubah, HbA1c menjadi kurang dapat diandalkan.</li>
+  </ul>
+  <p>
+    Pada keadaan itu, glukosa darah lebih dapat dipercaya daripada HbA1c. Ini alasan kuat untuk
+    mengisi kolom keterangan klinis pada permintaan — dokter yang membaca hasilnya perlu tahu.
+  </p>
+
+  <h2 id="qc">7. Kontrol mutu</h2>
+  <p>
+    Setelan <em>Results</em> disarankan <strong>Patient and quality control</strong> supaya hasil
+    QC ikut terkirim dan tercatat di GeuLIS, bukan hanya tersimpan di alat. Nilai QC yang hanya
+    ada di layar alat akan hilang saat alat diganti atau memorinya penuh, dan tidak bisa
+    ditunjukkan saat akreditasi.
+  </p>
+  <p>
+    Jalankan kontrol sesuai anjuran pabrik dan setiap kali membuka kotak kartrid lot baru.
+    Kalau hasil kontrol di luar rentang, <strong>jangan keluarkan hasil pasien</strong> sampai
+    penyebabnya ditemukan — periksa tanggal kedaluwarsa vial, lama vial sudah terbuka, dan
+    penyimpanan kartrid.
+  </p>
+
+  <h2 id="belum">8. Kalau alat tidak terlihat di jaringan</h2>
+  <p>Ini keadaan alat saat manual ini ditulis. Periksa berurutan:</p>
+  <ol>
+    <li>
+      <strong>Lampu port LAN di belakang alat.</strong> Kalau mati, ini murni soal kabel — tidak
+      ada gunanya mengutak-atik setelan. Periksa kabel dan port switch-nya.
+    </li>
+    <li>
+      <strong>Setelan sudah disimpan?</strong> Di layar jaringan Afinion ada tombol pensil
+      (ubah) dan tombol centang (simpan). Kalau centang belum ditekan, IP yang tampil belum
+      benar-benar dipakai. Sebagian setelan baru berlaku setelah alat dimatikan dan dinyalakan.
+    </li>
+    <li>
+      <strong>Uji dari server</strong> — masuk ke server GeuLIS, lalu:
+<pre>ping -c 3 192.168.1.8
+ip neigh show 192.168.1.8</pre>
+      <code>FAILED</code> pada baris <code>ip neigh</code> berarti alat tidak menjawab bahkan di
+      tingkat paling dasar: ia tidak ada di jaringan itu.
+    </li>
+    <li>
+      <strong>Buka halaman web alat</strong> — kalau <em>Web server</em> sudah dinyalakan,
+      <code>http://192.168.1.8</code> akan terbuka dari server. Kalau ping berhasil tetapi halaman
+      ini tidak terbuka, berarti jaringan sudah beres dan masalahnya di setelan alat.
+    </li>
+  </ol>
+
+  <h2 id="masalah">9. Kalau hasil tidak masuk ke GeuLIS</h2>
+  <p>Alat sudah terlihat di jaringan, tetapi hasil tidak muncul:</p>
+  <ol>
+    <li>
+      <strong>Buka Log Alat di GeuLIS.</strong> Ini pemeriksaan pertama dan paling menentukan,
+      karena memisahkan dua masalah yang sangat berbeda:
+      <ul>
+        <li><em>Tidak ada apa pun di log</em> → pesan tidak pernah sampai. Masalahnya di jaringan atau setelan alat.</li>
+        <li><em>Ada pesan masuk tetapi hasil tidak muncul di pasien</em> → pesan sampai tetapi tidak terpetakan. Masalahnya di pemetaan kode pemeriksaan.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Pastikan alat aktif di GeuLIS.</strong> Alat yang tidak aktif tidak dibukakan port,
+      dan sambungan dari alat akan ditolak tanpa jejak.
+    </li>
+    <li>
+      <strong>Cocokkan port.</strong> Port di menu alat harus sama persis dengan port di
+      pendaftaran GeuLIS.
+    </li>
+    <li>
+      <strong>Coba ganti protokol.</strong> ASTM LL dan ASTM HL berbeda dalam jabat tangan; kalau
+      satu diam, coba yang lain.
+    </li>
+    <li>
+      <strong>Periksa nomor sampel.</strong> Hasil dikaitkan ke permintaan lewat nomor sampel.
+      Nomor yang diketik berbeda dari yang ada di permintaan akan membuat hasil masuk tetapi
+      tidak menempel ke pasien mana pun.
+    </li>
+  </ol>
+
+  <hr>
+  <p class="footer">
+    Setelan konektivitas disarikan dari Afinion 2 User Manual resmi Abbott (1117346 Rev. A,
+    2023/02), bagian <em>Connectivity settings</em> dan Tabel 2. Keadaan jaringan diperiksa
+    langsung terhadap server dan alat pada 4 September 2026; saat itu alat belum tersambung.
+    Bagian pemetaan kode pemeriksaan masih menunggu pesan percobaan pertama dari alat.
+  </p>
+</div>
+
+</body>
+</html>

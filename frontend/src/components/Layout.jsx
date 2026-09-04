@@ -31,6 +31,7 @@ const MANUAL = [
   { path: '/manual/penggunaan', label: 'Manual Penggunaan', icon: '📖' },
   { path: '/manual/bc-3600', label: 'Manual Alat BC-3600', icon: '🩸' },
   { path: '/manual/bc-11', label: 'Manual Alat BC-11', icon: '🔬' },
+  { path: '/manual/afinion-2', label: 'Manual Alat Afinion 2', icon: '🩺' },
 ];
 
 export default function Layout() {

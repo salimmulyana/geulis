@@ -1,0 +1,16 @@
+{
+  "name": "geulis",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "bash start.sh",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "setup": "npm run install:all && npm install && cp -n backend/.env.example backend/.env 2>/dev/null || true && npm run seed",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "seed": "npm run seed --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

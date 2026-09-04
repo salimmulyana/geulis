@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Penggunaan — GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+      font-size: 0.85em;
+      line-height: 1.45;
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    td code { font-size: 0.85em; }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.1);
+      border-left-color: #ef4444;
+    }
+    .subtitle { color: var(--text-muted); margin-top: -0.5rem; }
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+    }
+    .toc ol { margin: 0.5rem 0; padding-left: 1.2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    ol li, ul li { margin: 0.3rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .footer { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+    .print-btn {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .print-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.2cm; }
+      body { background: #fff; color: #000; padding: 0; }
+      .container {
+        max-width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #000; box-shadow: none; border-radius: 0;
+      }
+      h1 { color: #000; border-bottom-color: #000; }
+      h2 { color: #000; border-bottom-color: #999; page-break-after: avoid; }
+      h3 { color: #000; page-break-after: avoid; }
+      p, li, strong, td, th, .subtitle { color: #000 !important; }
+      a { color: #000; text-decoration: none; }
+      pre {
+        background: #f4f4f4; color: #000; border: 1px solid #bbb;
+        page-break-inside: avoid; font-size: 0.75em;
+      }
+      code { background: #eee; color: #000; }
+      th { background: #e8e8e8 !important; color: #000; }
+      table, tr, img { page-break-inside: avoid; }
+      .toc { background: #f7f7f7; border: 1px solid #bbb; }
+      .toc a { color: #000; }
+      .alert, .alert.info, .alert.danger { background: #f7f7f7 !important; border-left: 4px solid #888; color: #000; }
+      .print-btn, .no-print { display: none !important; }
+      /* mulai Bagian A & B di halaman baru untuk kerapian */
+      div[style*="BAGIAN"], div[style*="background:var(--primary)"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Manual Penggunaan GeuLIS</h1>
+    <p class="subtitle">Panduan lengkap penggunaan aplikasi Laboratory Information System GeuLIS — untuk petugas lab &amp; administrator — beserta rujukan teknis komunikasi alat dan instalasi.</p>
+
+    <button type="button" class="print-btn no-print" onclick="window.print()">🖨️ Export PDF</button>
+
+    <div class="alert info">
+      <strong>Login demo:</strong> <code>admin</code> / <code><lihat SANDI_AWAL.txt></code> (Administrator) &nbsp;•&nbsp; <code>lab</code> / <code><lihat SANDI_AWAL.txt></code> (Petugas Lab). &nbsp;Akses web di <code>http://[IP_SERVER]:5173</code>.
+    </div>
+
+    <div class="toc">
+      <strong>Daftar Isi</strong>
+      <p style="margin:0.75rem 0 0.25rem; color:var(--text);"><strong>Bagian A — Penggunaan Aplikasi</strong></p>
+      <ol>
+        <li><a href="#a1">Masuk (Login) &amp; Peran Pengguna</a></li>
+        <li><a href="#a2">Dashboard Pemantauan</a></li>
+        <li><a href="#a3">Data Pasien</a></li>
+        <li><a href="#a4">Permintaan Lab &amp; Alur Status</a></li>
+        <li><a href="#a5">Mengisi Hasil Pemeriksaan</a></li>
+        <li><a href="#a6">Melihat &amp; Mencetak Hasil</a></li>
+        <li><a href="#a7">Alat Laboratorium</a></li>
+        <li><a href="#a8">User &amp; Hak Akses</a></li>
+        <li><a href="#a9">Pengaturan Sistem (Profil Klinik &amp; API)</a></li>
+        <li><a href="#a10">Ringkasan Alur Kerja Harian</a></li>
+        <li><a href="#a11">Bridging dengan SIMRS (REST API)</a></li>
+        <li><a href="#a12">Fitur Lanjutan (Verifikasi, Kritis, Audit, Tren, Label)</a></li>
+      </ol>
+      <p style="margin:0.75rem 0 0.25rem; color:var(--text);"><strong>Bagian B — Teknis &amp; Instalasi</strong></p>
+      <ol>
+        <li><a href="#s1">Model Dasar: LIS sebagai Server</a></li>
+        <li><a href="#s2">Satu TCP Server per Alat</a></li>
+        <li><a href="#s3">Protokol yang Didukung</a></li>
+        <li><a href="#s4">Alur Komunikasi End-to-End</a></li>
+        <li><a href="#s5">Parsing &rarr; Pencocokan Pasien &rarr; Penyimpanan</a></li>
+        <li><a href="#s6">Komunikasi Dua Arah — Host Query (ASTM)</a></li>
+        <li><a href="#s7">Logging</a></li>
+        <li><a href="#s8">Ringkasan Konfigurasi Alat</a></li>
+        <li><a href="#s9">Catatan Keterbatasan</a></li>
+        <li><a href="#s10">Panduan Instalasi (Setup s/d Terima Hasil)</a></li>
+      </ol>
+    </div>
+
+    <div style="margin-top:2rem; padding:0.6rem 1rem; background:var(--primary); color:#fff; border-radius:6px; font-weight:600;">BAGIAN A — PENGGUNAAN APLIKASI</div>
+
+    <h2 id="a1">A1. Masuk (Login) &amp; Peran Pengguna</h2>
+    <p>Buka <code>http://[IP_SERVER]:5173</code> di browser, masukkan <strong>username</strong> dan <strong>password</strong>. Setelah berhasil, menu yang tampil di sidebar menyesuaikan <strong>hak akses</strong> peran Anda.</p>
+    <p>Ada dua peran bawaan:</p>
+    <table>
+      <thead><tr><th>Peran</th><th>Akses</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Administrator</strong> (<code>admin</code>)</td><td>Semua menu, termasuk User &amp; Hak Akses dan Pengaturan Sistem. Bisa menghapus data.</td></tr>
+        <tr><td><strong>Petugas Lab</strong> (<code>lab</code>)</td><td>Dashboard, Data Pasien, Permintaan Lab, dan Hasil Lab. Tidak bisa mengelola user/pengaturan.</td></tr>
+      </tbody>
+    </table>
+    <div class="alert info">Menu &amp; tombol muncul/hilang otomatis sesuai hak akses. Contoh: tombol <em>Hapus</em> pasien hanya terlihat oleh Administrator. Untuk keluar, klik <strong>🚪 Keluar</strong> di bawah sidebar.</div>
+
+    <h2 id="a2">A2. Dashboard Pemantauan</h2>
+    <p>Halaman pertama setelah login. Menampilkan ringkasan operasional harian:</p>
+    <ul>
+      <li><strong>Kartu statistik</strong>: Permintaan Pending, Permintaan Hari Ini, Hasil Hari Ini, Total Pasien.</li>
+      <li><strong>Status Alat Lab</strong>: daftar alat, port, dan waktu <em>terakhir terhubung</em> — untuk memastikan alat aktif.</li>
+      <li><strong>Hasil Kritis / Abnormal</strong>: hasil terbaru yang di luar nilai rujukan (perlu perhatian segera).</li>
+      <li><strong>Permintaan Terbaru</strong>: order lab terakhir beserta status &amp; prioritasnya.</li>
+    </ul>
+
+    <h2 id="a3">A3. Data Pasien</h2>
+    <p>Menu <strong>👤 Data Pasien</strong> untuk mengelola identitas pasien.</p>
+    <ul>
+      <li><strong>Cari</strong>: ketik nama atau No. RM di kotak pencarian (otomatis menyaring).</li>
+      <li><strong>Tambah</strong> (tombol <em>+ Pasien Baru</em>): isi <strong>No. Rekam Medis</strong> &amp; <strong>Nama</strong> (wajib), lalu Tgl Lahir, Jenis Kelamin, Telepon, Alamat (opsional). Klik <em>Simpan</em>.</li>
+      <li><strong>Edit</strong>: ubah data pasien yang sudah ada.</li>
+      <li><strong>Hapus</strong>: hanya Administrator.</li>
+    </ul>
+    <div class="alert">No. Rekam Medis harus <strong>unik</strong>. Pasien juga bisa terbentuk otomatis dari order SIMRS (bridging) atau dari hasil alat yang barcode-nya belum dikenal — lihat <a href="#s5">Bagian B-5</a>.</div>
+
+    <h2 id="a4">A4. Permintaan Lab &amp; Alur Status</h2>
+    <p>Menu <strong>🧪 Permintaan Lab</strong> adalah pusat order pemeriksaan. Data auto-refresh tiap 15 detik.</p>
+    <h3>Membuat permintaan baru</h3>
+    <ol>
+      <li>Klik <strong>+ Permintaan Baru</strong>.</li>
+      <li>Pilih <strong>Pasien</strong> dan <strong>Prioritas</strong> (Normal / Cito / STAT).</li>
+      <li>Centang <strong>Pemeriksaan</strong> yang diminta (bisa dicari; klik baris untuk memilih).</li>
+      <li>Isi <em>Catatan</em> bila perlu, lalu <em>Simpan</em>.</li>
+    </ol>
+    <h3>Alur status (tombol aksi berubah sesuai status)</h3>
+    <pre>pending  ──[Ambil Sampel]──▶  collected  ──[Proses Sampel]──▶  processing  ──[Selesai]──▶  completed</pre>
+    <table>
+      <thead><tr><th>Status</th><th>Arti &amp; aksi tersedia</th></tr></thead>
+      <tbody>
+        <tr><td><code>pending</code></td><td>Baru diorder. Bisa <em>Edit</em> atau <em>Ambil Sampel</em>.</td></tr>
+        <tr><td><code>collected</code></td><td>Sampel diambil. Aksi: <em>Proses Sampel</em>.</td></tr>
+        <tr><td><code>processing</code></td><td>Sedang dikerjakan. Bisa <em>Isi/Edit Hasil</em>, <em>Lihat Hasil</em>, atau <em>Selesai</em>.</td></tr>
+        <tr><td><code>completed</code></td><td>Selesai. Masih bisa <em>Isi/Edit Hasil</em> &amp; <em>Lihat Hasil</em>.</td></tr>
+      </tbody>
+    </table>
+    <div class="alert">Filter berdasarkan <strong>status</strong> dan <strong>rentang tanggal</strong> (maks. 31 hari). Menghapus permintaan <strong>juga menghapus semua hasil</strong> yang terhubung.</div>
+
+    <h2 id="a5">A5. Mengisi Hasil Pemeriksaan</h2>
+    <p>Ada tiga cara hasil masuk ke sistem:</p>
+    <ol>
+      <li><strong>Otomatis dari alat</strong> — hasil langsung tersimpan saat alat mengirim data (lihat Bagian B).</li>
+      <li><strong>Isi per permintaan</strong> — di menu Permintaan Lab, tombol <strong>📝 Isi / Edit Hasil</strong> pada order berstatus <code>processing</code>/<code>completed</code>. Muncul daftar parameter order tersebut; ketik nilainya. Kolom <strong>Tampil Cetakan</strong> menentukan apakah parameter itu ikut dicetak di laporan. Klik <em>Simpan Hasil</em>.</li>
+      <li><strong>Input manual bebas</strong> — di menu Hasil Lab, tombol <strong>+ Input Manual</strong>: pilih pasien (dari order aktif), pemeriksaan, nilai, dan satuan.</li>
+    </ol>
+    <div class="alert info"><strong>Flag otomatis:</strong> setiap nilai dibandingkan dengan nilai rujukan pemeriksaan → diberi tanda <code>normal</code> / <code>low</code> / <code>high</code> / <code>critical</code> / <code>abnormal</code>. Nilai jauh di luar rentang (&lt;70% atau &gt;130%) ditandai <strong>critical</strong>.</div>
+
+    <h2 id="a6">A6. Melihat &amp; Mencetak Hasil</h2>
+    <p>Menu <strong>📋 Hasil Lab</strong> menampilkan hasil <strong>dikelompokkan per pasien per tanggal</strong>. Cari berdasarkan nama/No. RM dan saring rentang tanggal (maks. 31 hari).</p>
+    <ul>
+      <li><strong>📄 Lihat Hasil</strong> — membuka <em>Lembar Hasil Laboratorium</em>: kop instansi (dari Pengaturan), identitas pasien, tabel hasil (Pemeriksaan, Hasil, Satuan, Nilai Rujukan, Keterangan), dan kolom tanda tangan pemeriksa.</li>
+      <li><strong>🖨️ Cetak</strong> — mencetak lembar hasil (format A4 portrait). Nilai abnormal ditandai <strong>tebal + tanda *</strong>.</li>
+      <li><strong>Hapus</strong> — menghapus seluruh hasil pasien pada tanggal tersebut.</li>
+    </ul>
+    <div class="alert">Hanya parameter dengan <em>Tampil Cetakan</em> aktif dan tes yang <em>ditampilkan di laporan</em> yang muncul di cetakan. Urutan pemeriksaan mengikuti <code>sort_order</code> katalog tes.</div>
+
+    <h2 id="a7">A7. Alat Laboratorium</h2>
+    <p>Menu <strong>⚙️ Alat Laboratorium</strong> untuk mendaftarkan analyzer, mengelola pemetaan kode pemeriksaan, dan memantau log komunikasi.</p>
+    <ul>
+      <li><strong>Tambah/Edit alat</strong>: kode, nama, protokol (ASTM/HL7/JSON/XML), dan <strong>Port TCP</strong>.</li>
+      <li><strong>Auto-mapping</strong>: kode tes dari alat otomatis terdaftar saat sampel pertama masuk — Anda tinggal merapikan nama, satuan, dan nilai rujukan.</li>
+      <li><strong>Log komunikasi</strong>: memantau data masuk/keluar (<code>&lt;ENQ&gt;</code>, <code>&lt;ACK&gt;</code>, record hasil) untuk troubleshooting.</li>
+    </ul>
+    <div class="alert">Detail teknis lengkap (cara alat terhubung, protokol, port, host query dua arah) ada di <a href="#s1"><strong>Bagian B</strong></a>. <strong>Penting:</strong> setelah menambah alat / mengubah port, <strong>backend harus di-restart</strong> agar port listener terbuka — lihat <a href="#s2">Bagian B-2</a>.</div>
+
+    <h2 id="a8">A8. User &amp; Hak Akses</h2>
+    <p>Menu <strong>🔐 User &amp; Hak Akses</strong> (khusus yang berhak). Dua tab:</p>
+    <ul>
+      <li><strong>Daftar User</strong>: tambah user (username, password, nama, email, role), ubah <em>Password</em>, dan hapus user. Kolom menampilkan status aktif &amp; login terakhir.</li>
+      <li><strong>Hak Akses Role</strong>: pilih role, lalu centang izin per-menu (lihat/kelola Dashboard, Permintaan, Pasien, Hasil, User, Mapping, Alat). Klik <em>Simpan Hak Akses</em>. Perubahan langsung berlaku bagi semua user pada role tersebut.</li>
+    </ul>
+
+    <h2 id="a9">A9. Pengaturan Sistem (Profil Klinik &amp; API)</h2>
+    <p>Menu <strong>⚙️ Pengaturan Aplikasi</strong> (khusus Administrator). Dua tab:</p>
+    <ul>
+      <li><strong>Profil Klinik</strong>: nama klinik/RS, alamat, telepon, email, dan <strong>logo</strong> (maks. 2MB). Data ini menjadi <strong>kop</strong> pada cetakan hasil lab.</li>
+      <li><strong>Integrasi API</strong>: buat &amp; kelola <strong>API Key</strong> untuk SIMRS/aplikasi eksternal. API Key hanya ditampilkan <strong>sekali</strong> saat dibuat — simpan baik-baik. Tersedia tombol <em>Lihat Dokumentasi API</em> (bridging order &amp; tarik hasil).</li>
+    </ul>
+    <div class="alert">API Key memberi akses baca/tulis data medis. Jaga kerahasiaannya; cabut (hapus) bila tidak dipakai.</div>
+
+    <h2 id="a10">A10. Ringkasan Alur Kerja Harian</h2>
+    <pre>1. Order masuk
+   • dari SIMRS (otomatis via API bridging), ATAU
+   • input manual di menu Permintaan Lab
+        │
+2. Petugas: Ambil Sampel → Proses Sampel
+        │
+3. Hasil terisi
+   • otomatis dari alat (barcode dicocokkan ke pasien/order), ATAU
+   • diketik via "Isi / Edit Hasil"
+        │
+4. Verifikasi di menu Hasil Lab → tandai "Selesai"
+        │
+5. Cetak Lembar Hasil (🖨️) untuk pasien
+        │
+6. SIMRS menarik hasil otomatis via API (opsional)</pre>
+
+    <h2 id="a11">A11. Bridging dengan SIMRS (REST API)</h2>
+    <p>GeuLIS menyediakan <strong>REST API</strong> agar SIMRS (atau aplikasi lain) dapat <strong>mengirim permintaan lab</strong> dan <strong>menarik hasil</strong> secara otomatis, tanpa input ulang. Dua endpoint utama:</p>
+    <table>
+      <thead><tr><th>Fungsi</th><th>Endpoint</th><th>Method</th></tr></thead>
+      <tbody>
+        <tr><td>SIMRS mengirim order</td><td><code>/bridging/order</code></td><td><strong>POST</strong></td></tr>
+        <tr><td>SIMRS menarik hasil</td><td><code>/bridging/result/{simrs_order_id}</code></td><td><strong>GET</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Langkah 1 — Buat API Key</h3>
+    <p>Login sebagai <strong>Administrator</strong> → menu <strong>Pengaturan Aplikasi → tab Integrasi API → + Generate Key Baru</strong>. Salin key (format <code>khanza_...</code>) — hanya ditampilkan sekali. Setiap request wajib menyertakan header:</p>
+    <table>
+      <thead><tr><th>Header</th><th>Nilai</th></tr></thead>
+      <tbody>
+        <tr><td><code>x-api-key</code></td><td>API Key dari LIS (mis. <code>khanza_CONTOH123</code>)</td></tr>
+        <tr><td><code>Content-Type</code></td><td><code>application/json</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Langkah 2 — SIMRS Mengirim Order</h3>
+    <p><strong>POST</strong> <code>http://[IP_SERVER]:3001/bridging/order</code></p>
+    <table>
+      <thead><tr><th>Field</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td><code>simrs_order_id</code></td><td>Ya</td><td>Nomor order dari SIMRS. Harus unik.</td></tr>
+        <tr><td><code>medical_record_no</code></td><td>Ya</td><td>No. Rekam Medis pasien.</td></tr>
+        <tr><td><code>patient_name</code></td><td>Ya</td><td>Nama pasien.</td></tr>
+        <tr><td><code>tests</code></td><td>Ya</td><td>Array kode pemeriksaan. Bisa <strong>kode LIS</strong> (mis. <code>HGB</code>) atau <strong>kode SIMRS</strong> (mis. <code>3962</code>) — LIS menerjemahkan otomatis via mapping.</td></tr>
+        <tr><td><code>gender</code></td><td>Tidak</td><td><code>L</code> / <code>P</code>. Default <code>L</code>.</td></tr>
+        <tr><td><code>birth_date</code></td><td>Tidak</td><td>Format <code>YYYY-MM-DD</code>.</td></tr>
+        <tr><td><code>priority</code></td><td>Tidak</td><td><code>normal</code> / <code>cito</code> / <code>stat</code>.</td></tr>
+        <tr><td><code>notes</code></td><td>Tidak</td><td>Catatan klinis.</td></tr>
+      </tbody>
+    </table>
+    <p>Contoh request:</p>
+    <pre>curl -X POST http://[IP_SERVER]:3001/bridging/order \
+  -H "x-api-key: khanza_xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "simrs_order_id": "ORD-20260724-001",
+    "medical_record_no": "RM-000123",
+    "patient_name": "Budi Santoso",
+    "gender": "L",
+    "birth_date": "1990-05-15",
+    "tests": ["HGB", "WBC"]
+  }'</pre>
+    <p>Respons sukses (LIS otomatis membuat pasien bila belum ada):</p>
+    <pre>{
+  "message": "Order berhasil diterima",
+  "data": {
+    "request_no": "REQ20260724999107",
+    "simrs_order_id": "ORD-20260724-001",
+    "patient_id": 28,
+    "request_id": 27
+  }
+}</pre>
+    <div class="alert">Jika <code>simrs_order_id</code> sudah pernah dikirim → HTTP <code>409</code>. Jika kode tes tidak dikenal → HTTP <code>400</code>. Tanpa API key valid → HTTP <code>401</code>.</div>
+
+    <h3>Langkah 3 — SIMRS Menarik Hasil</h3>
+    <p><strong>GET</strong> <code>http://[IP_SERVER]:3001/bridging/result/{simrs_order_id}</code></p>
+    <pre>curl http://[IP_SERVER]:3001/bridging/result/ORD-20260724-001 \
+  -H "x-api-key: khanza_xxxxxxxx"</pre>
+    <p>Respons — setiap item hasil punya <code>status</code> <code>pending</code> (belum keluar) atau <code>completed</code> (sudah ada nilai):</p>
+    <pre>{
+  "simrs_order_id": "ORD-20260724-001",
+  "request_no": "REQ20260724999107",
+  "status": "completed",
+  "patient": { "medical_record_no": "RM-000123", "name": "Budi Santoso", ... },
+  "results": [
+    {
+      "test_code": "HGB",
+      "code_simrs": "3962",
+      "test_name": "Hemoglobin",
+      "result_value": "14.2",
+      "unit": "g/dL",
+      "reference": "12 - 17.5",
+      "flag": "normal",
+      "result_time": "2026-07-24 08:15:00",
+      "status": "completed"
+    }
+  ]
+}</pre>
+    <div class="alert info"><strong>Pola pemakaian SIMRS:</strong> kirim order sekali saat dokter meminta lab, lalu <em>polling</em> endpoint hasil secara berkala (mis. tiap beberapa menit) hingga semua item ber-status <code>completed</code>.</div>
+    <div class="alert">Dokumentasi API teknis lengkap tersedia di tombol <strong>Lihat Dokumentasi API</strong> (menu Pengaturan → Integrasi API), atau buka <code>/API_BRIDGING.html</code>.</div>
+
+    <h2 id="a12">A12. Fitur Lanjutan</h2>
+
+    <h3>A12.1. Verifikasi Hasil 2 Tahap</h3>
+    <p>Hasil yang masuk <strong>otomatis dari alat</strong> berstatus <code>preliminary</code> (belum divalidasi) dan <strong>belum</strong> bisa ditarik SIMRS sebagai "completed". Analis memeriksa lalu <strong>memverifikasi</strong> sehingga status menjadi <code>final</code>.</p>
+    <ul>
+      <li>Di menu <strong>Hasil Lab</strong>, kolom <strong>Status</strong> menampilkan <span style="color:#f59e0b">⏳ n belum verifikasi</span> atau <span style="color:#059669">✓ Terverifikasi</span>.</li>
+      <li>Klik tombol <strong>✓ Verifikasi</strong> pada baris pasien untuk memvalidasi semua hasil tanggal itu sekaligus.</li>
+      <li>Setelah diverifikasi, hasil menjadi final dan (bila SIMRS aktif) otomatis di-<em>push</em> ke SIMRS.</li>
+    </ul>
+    <div class="alert info">Hasil yang <strong>diketik manual</strong> oleh petugas langsung dianggap final (sudah divalidasi manusia). Yang perlu verifikasi hanya hasil otomatis dari alat.</div>
+
+    <h3>A12.2. Notifikasi Hasil Kritis</h3>
+    <p>Hasil dengan flag <code>critical</code> (jauh di luar nilai rujukan) muncul sebagai <strong>banner merah di Dashboard</strong>. Petugas menekan <strong>✓ Tindak lanjut</strong> untuk menandai bahwa hasil sudah dihubungi/ditindaklanjuti (acknowledge). Banner berkurang setiap ada yang ditindaklanjuti dan menyegar otomatis tiap 20 detik.</p>
+
+    <h3>A12.3. Log Audit</h3>
+    <p>Menu <strong>📜 Log Audit</strong> (Administrator) mencatat setiap perubahan data: <em>siapa</em> (user), <em>kapan</em>, <em>aksi</em> (CREATE/UPDATE/DELETE/VERIFY/ACK/PUSH/LOGIN), <em>entitas</em>, dan detail. Bisa disaring per entitas atau dicari. Berguna untuk penelusuran &amp; kepatuhan data medis.</p>
+
+    <h3>A12.4. Grafik Tren Hasil</h3>
+    <p>Di menu <strong>Hasil Lab</strong>, tombol <strong>📈 Tren</strong> menampilkan grafik perkembangan nilai satu pemeriksaan dari waktu ke waktu untuk pasien tersebut. Area hijau = rentang rujukan; titik merah = kritis, kuning = abnormal. Berguna untuk kontrol rutin (mis. gula darah, kreatinin).</p>
+
+    <h3>A12.5. Export CSV &amp; Cetak Worklist</h3>
+    <p>Di menu <strong>Hasil Lab</strong>:</p>
+    <ul>
+      <li><strong>⬇️ Export CSV</strong> — unduh daftar hasil (sesuai filter) untuk diolah di Excel.</li>
+      <li><strong>🖨️ Worklist</strong> — cetak daftar kerja harian (pasien yang perlu dikerjakan/ada hasilnya).</li>
+    </ul>
+
+    <h3>A12.6. Label Barcode Tabung</h3>
+    <p>Di menu <strong>Permintaan Lab</strong>, tombol <strong>🏷️ Label</strong> mencetak label tabung berisi identitas pasien dan <strong>barcode Code39</strong>. Barcode ini berisi No. Order/RM, sehingga saat tabung dipindai alat, hasil otomatis tercocokkan ke pasien yang benar (lihat <a href="#s5">Bagian B-5</a>). Ukuran label 50×30&nbsp;mm.</p>
+
+    <h3>A12.7. Nilai Rujukan per Gender</h3>
+    <p>Saat mengatur pemeriksaan (menu Alat Laboratorium), selain rujukan umum, tersedia <strong>Rujukan Min/Max khusus Laki-laki</strong> dan <strong>Perempuan</strong>. Bila diisi, penentuan flag (normal/low/high/critical) memakai rujukan sesuai gender pasien; bila kosong, memakai rujukan umum.</p>
+
+    <h3>A12.8. Reload Listener Alat</h3>
+    <p>Setelah menambah alat atau mengubah port, klik <strong>🔁 Reload Listener</strong> di menu Alat Laboratorium untuk membuka/menutup port TCP <strong>tanpa perlu me-restart backend</strong>.</p>
+
+    <div style="margin-top:2.5rem; padding:0.6rem 1rem; background:#334155; color:#fff; border-radius:6px; font-weight:600;">BAGIAN B — TEKNIS &amp; INSTALASI</div>
+    <div class="alert info" style="margin-top:1rem;">
+      Bagian ini untuk teknisi/IT: cara kerja koneksi alat, protokol, dan instalasi server.
+      <br><strong>Kode inti:</strong> <code>backend/src/services/instrumentListener.js</code> dan <code>backend/src/services/protocolParsers.js</code>.
+    </div>
+
+    <h2 id="s1">1. Model Dasar: LIS sebagai Server, Alat sebagai Client</h2>
+    <p>LIS <strong>tidak pernah menghubungi alat</strong>. LIS membuka TCP socket server dan <strong>menunggu alat yang melakukan koneksi</strong> (mode <em>passive listener</em> — standar untuk mayoritas analyzer).</p>
+    <pre>Sysmex XN-1000  ──TCP connect──▶  LIS :5001   (instrument HEM-01)
+Roche c501      ──TCP connect──▶  LIS :5002   (instrument CHEM-01)</pre>
+    <p>Konsekuensi di lapangan:</p>
+    <ul>
+      <li>Di panel setting alat, isi <strong>Host IP = IP server LIS</strong> dan <strong>Host Port = port</strong> yang Anda tetapkan di menu <em>Alat Laboratorium</em>.</li>
+      <li><strong>Belum ada dukungan serial RS-232.</strong> Alat yang hanya punya port serial perlu <em>converter serial-to-TCP</em> (mis. Moxa NPort / USR-TCP232) di depannya.</li>
+    </ul>
+
+    <h2 id="s2">2. Satu TCP Server per Alat</h2>
+    <p>Saat backend start, LIS membaca tabel <code>instruments</code> yang <code>is_active = 1</code>, lalu membuka satu <code>net.createServer()</code> untuk masing-masing di <code>host:port</code>-nya. Default: <code>host = 0.0.0.0</code>, <code>port = 5000</code>.</p>
+    <p>Seed bawaan:</p>
+    <table>
+      <thead><tr><th>Kode</th><th>Nama</th><th>Protokol</th><th>Port</th></tr></thead>
+      <tbody>
+        <tr><td>HEM-01</td><td>Hematology Analyzer</td><td><code>astm</code></td><td>5001</td></tr>
+        <tr><td>CHEM-01</td><td>Chemistry Analyzer</td><td><code>astm</code></td><td>5002</td></tr>
+      </tbody>
+    </table>
+    <div class="alert">
+      <strong>⚠️ PENTING — listener hanya dibuka sekali saat backend boot.</strong>
+      Belum ada endpoint reload. Setelah <strong>menambah alat baru</strong> atau <strong>mengubah port</strong> lewat UI, Anda <strong>wajib me-restart backend</strong> agar port-nya benar-benar terbuka:
+      <pre>pm2 restart geulis-backend</pre>
+      Jika port sudah dipakai proses lain, server gagal diam-diam dan hanya muncul warning <code>EADDRINUSE</code> di log.
+    </div>
+    <p>Untuk menonaktifkan seluruh listener (mis. saat development), set di <code>backend/.env</code>:</p>
+    <pre>INSTRUMENT_LISTENER_ENABLED=false</pre>
+
+    <h2 id="s3">3. Protokol yang Didukung</h2>
+    <p>Diset per-alat lewat kolom <code>protocol</code>. Empat protokol tersedia:</p>
+    <table>
+      <thead><tr><th>Protokol</th><th>Kegunaan umum</th><th>Balasan teks LIS</th></tr></thead>
+      <tbody>
+        <tr><td><code>astm</code></td><td>Sysmex, Roche, Mindray (E1381/E1394)</td><td><strong>Tidak</strong> (hanya <code>&lt;ACK&gt;</code> biner)</td></tr>
+        <tr><td><code>hl7</code></td><td>Analyzer/middleware berbasis HL7 v2</td><td>Ya (<code>ACK|n|hl7</code>)</td></tr>
+        <tr><td><code>json</code> / <code>tcp_json</code></td><td>Integrasi custom / middleware modern</td><td>Ya (<code>ACK|n|json</code>)</td></tr>
+        <tr><td><code>xml</code></td><td>Integrasi custom berbasis XML</td><td>Ya (<code>ACK|n|xml</code>)</td></tr>
+      </tbody>
+    </table>
+    <p>Format pesan yang diharapkan tiap protokol:</p>
+    <ul>
+      <li><strong>ASTM</strong> — record <code>P</code> (pasien), <code>O</code> (order/barcode), <code>R</code> (hasil), pipe-delimited, diakhiri <code>&lt;EOT&gt;</code> (<code>\x04</code>) atau newline.</li>
+      <li><strong>HL7 v2</strong> — segment <code>PID</code> (pasien), <code>OBR</code> (order, barcode di field 3), <code>OBX</code> (hasil: kode di OBX-3, nilai di OBX-5).</li>
+      <li><strong>JSON</strong> — <code>{"sampleId":"ORD001","results":[{"test_code":"HGB","value":"14.2","unit":"g/dL"}]}</code></li>
+      <li><strong>XML</strong> — <code>&lt;sample&gt;ORD001&lt;/sample&gt;&lt;item code="HGB" value="14.2"/&gt;</code></li>
+    </ul>
+    <div class="alert info">
+      <strong>Catatan:</strong> kolom <code>config_json</code> (mis. <code>{"delimiter":"|"}</code>) tersimpan di DB tetapi <strong>belum dibaca</strong> oleh parser — delimiter pipe saat ini di-hardcode.
+    </div>
+
+    <h2 id="s4">4. Alur Komunikasi End-to-End</h2>
+    <pre>┌─────────┐                                          ┌──────────────────────────┐
+│  ALAT   │                                          │   LIS (TCP server:port)  │
+└────┬────┘                                          └────────────┬─────────────┘
+     │  TCP connect                                               │
+     │ ─────────────────────────────────────────────────────────▶│
+     │                                                            │
+     │  &lt;ENQ&gt; (0x05)        [ASTM]                                │
+     │ ─────────────────────────────────────────────────────────▶│
+     │                                        balas &lt;ACK&gt; (0x06)  │
+     │ ◀─────────────────────────────────────────────────────────│
+     │                                                            │
+     │  frame data (P|... O|... R|...)                            │  buffer += chunk
+     │ ─────────────────────────────────────────────────────────▶│  cek isMessageComplete()
+     │                                        balas &lt;ACK&gt; [ASTM]  │  log ke instrument_logs
+     │ ◀─────────────────────────────────────────────────────────│
+     │                                                            │
+     │  &lt;EOT&gt; (0x04)        [ASTM]                                │  ── parse &amp; simpan hasil ──
+     │ ─────────────────────────────────────────────────────────▶│  socket.end()
+     │                                                            │
+     │  (non-ASTM) balas ACK|&lt;jumlah tersimpan&gt;|&lt;protokol&gt;        │
+     │ ◀─────────────────────────────────────────────────────────│</pre>
+
+    <h3>4a. Buffering &amp; deteksi akhir pesan</h3>
+    <p>TCP adalah <em>stream</em>, bukan pesan — satu pesan alat bisa tiba tercecer dalam beberapa event <code>data</code>. Tiap chunk ditumpuk ke <code>buffer</code>, lalu dicek dengan <code>isMessageComplete()</code>:</p>
+    <table>
+      <thead><tr><th>Protokol</th><th>Dianggap lengkap bila</th></tr></thead>
+      <tbody>
+        <tr><td><code>astm</code></td><td>ada <code>&lt;EOT&gt;</code> (<code>\x04</code>), atau baris <code>L|1</code>, atau <code>R|</code> + newline</td></tr>
+        <tr><td><code>hl7</code></td><td>ada <code>\x1C</code> (FS/MLLP), atau <code>OBX|</code> + diakhiri newline</td></tr>
+        <tr><td><code>json</code></td><td><code>JSON.parse()</code> berhasil</td></tr>
+        <tr><td><code>xml</code></td><td>ada tag penutup <code>&lt;/…&gt;</code></td></tr>
+      </tbody>
+    </table>
+    <p>Jika belum lengkap → tunggu chunk berikutnya. Jika lengkap → buffer diproses lalu dikosongkan.</p>
+
+    <h3>4b. Handshake ASTM (ENQ / ACK / EOT)</h3>
+    <p>Khusus <code>astm</code>, LIS membalas otomatis:</p>
+    <ul>
+      <li>Chunk mengandung <code>&lt;ENQ&gt;</code> (<code>\x05</code>) → balas <code>&lt;ACK&gt;</code> (<code>\x06</code>) = "silakan kirim".</li>
+      <li>Chunk mengandung newline tapi bukan <code>&lt;EOT&gt;</code> → balas <code>&lt;ACK&gt;</code> = "frame diterima".</li>
+      <li><code>&lt;EOT&gt;</code> (<code>\x04</code>) diterima → <code>socket.end()</code>, koneksi ditutup rapi.</li>
+    </ul>
+    <div class="alert">
+      Untuk ASTM, LIS <strong>tidak pernah</strong> mengirim teks seperti <code>ACK|3|astm</code> (Sysmex akan error bila dikirimi teks bebas setelah EOT). Balasan teks <code>ACK|n|protokol</code> / <code>NAK|pesan</code> <strong>hanya</strong> untuk JSON/HL7/XML.
+    </div>
+
+    <h2 id="s5">5. Parsing &rarr; Pencocokan Pasien &rarr; Penyimpanan</h2>
+
+    <h3>5a. Yang diambil dari pesan</h3>
+    <p>Parser hanya mencari dua hal: <strong>ID sampel (barcode)</strong> dan <strong>daftar hasil</strong> (plus data pasien opsional: nama, tgl lahir, gender). Contoh penanganan khusus Sysmex:</p>
+    <ul>
+      <li>Kode tes berformat <code>^^^^WBC^1</code> → diekstrak menjadi <code>WBC</code>.</li>
+      <li>Pemisah baris hanya <code>\r</code> (bukan <code>\n</code>) tetap didukung.</li>
+    </ul>
+
+    <h3>5b. Pencocokan barcode ke pasien</h3>
+    <p>Barcode dicari <strong>sekaligus ke 4 kolom</strong> (<code>resolvePatientId</code>):</p>
+    <ul>
+      <li><code>patients.medical_record_no</code></li>
+      <li><code>patients.order_no</code></li>
+      <li><code>lab_requests.request_no</code></li>
+      <li><code>lab_requests.simrs_order_id</code></li>
+    </ul>
+    <p>Jadi barcode boleh berisi No. RM <strong>atau</strong> No. Order SIMRS — keduanya cocok. Bila <strong>tidak ditemukan sama sekali</strong>, pasien dibuat otomatis (nama dari record <code>P</code> atau <code>Pasien &lt;barcode&gt;</code>), plus satu <code>lab_requests</code> berstatus <code>completed</code>.</p>
+
+    <h3>5c. Auto-mapping kode tes</h3>
+    <p>Sebelum menyimpan, tiap kode tes dari alat dicek di <code>instrument_test_map</code>. Bila belum ada mapping-nya, kode itu <strong>otomatis didaftarkan</strong> ke <code>lab_tests</code> sekaligus dibuatkan mapping-nya.</p>
+    <div class="alert info">
+      Praktis untuk setup awal: jalankan satu sampel, semua parameter alat langsung muncul di menu <em>Alat Laboratorium</em>, tinggal Anda rapikan nama/satuan/nilai rujukannya.
+    </div>
+
+    <h3>5d. Perhitungan flag</h3>
+    <table>
+      <thead><tr><th>Kondisi</th><th>Flag</th></tr></thead>
+      <tbody>
+        <tr><td>nilai &lt; <code>reference_min</code></td><td><code>low</code></td></tr>
+        <tr><td>nilai &lt; 70% dari <code>reference_min</code></td><td><code>critical</code></td></tr>
+        <tr><td>nilai &gt; <code>reference_max</code></td><td><code>high</code></td></tr>
+        <tr><td>nilai &gt; 130% dari <code>reference_max</code></td><td><code>critical</code></td></tr>
+        <tr><td>dalam rentang</td><td><code>normal</code></td></tr>
+        <tr><td>bukan angka</td><td><code>abnormal</code></td></tr>
+      </tbody>
+    </table>
+    <p>Hasil disimpan ke <code>lab_results</code>.</p>
+
+    <h2 id="s6">6. Komunikasi Dua Arah — Host Query (ASTM saja)</h2>
+    <p>Fitur worklist otomatis: alat menanyakan "tabung ini mau diperiksa apa?" dan LIS menjawab dengan daftar tes yang sudah di-order.</p>
+    <pre>Alat scan barcode tabung
+   │
+   ├──▶ kirim record  Q|...|077071          "tabung ini mau diperiksa apa?"
+   │
+   │    LIS: cari lab_requests dari barcode → ambil lab_request_items
+   │         → terjemahkan ke kode alat via instrument_test_map
+   │
+   ◀──── H|…   P|1   O|1|077071||^^^WBC\^^^^HGB…|…|Q   L|1|N
+   │
+   └──▶ alat langsung menjalankan tes yang diminta, tanpa input manual</pre>
+    <p>Bila order tidak ditemukan atau tidak ada tes yang ter-mapping, <code>buildAstmOrder()</code> mengembalikan string kosong → LIS tidak membalas → alat biasanya jatuh ke mode default/manual.</p>
+
+    <h2 id="s7">7. Logging</h2>
+    <p>Setiap chunk masuk dan setiap balasan dicatat ke tabel <code>instrument_logs</code>, dengan control character diubah menjadi teks terbaca agar bisa dibaca di UI: <code>&lt;ENQ&gt;</code>, <code>&lt;ACK&gt;</code>, <code>&lt;EOT&gt;</code>, <code>&lt;STX&gt;</code>, <code>&lt;ETX&gt;</code>.</p>
+    <ul>
+      <li>50 log terakhir tampil via <code>GET /api/instruments/logs/recent</code> (menu <em>Alat Laboratorium</em>).</li>
+      <li>Kolom <code>instruments.last_connected</code> diperbarui tiap ada data masuk.</li>
+      <li>Debug log mentah ditulis ke <code>/tmp/lis_debug.log</code> (⚠️ path Unix — tidak berfungsi di Windows Server; tanpa rotasi).</li>
+    </ul>
+
+    <h2 id="s8">8. Ringkasan Konfigurasi Alat</h2>
+    <p>Di menu <strong>Alat Laboratorium</strong> LIS, tiap alat memiliki:</p>
+    <table>
+      <thead><tr><th>Field</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td><code>code</code></td><td>Kode unik alat (mis. <code>HEM-01</code>)</td></tr>
+        <tr><td><code>name</code></td><td>Nama alat</td></tr>
+        <tr><td><code>protocol</code></td><td><code>astm</code> / <code>hl7</code> / <code>json</code> / <code>xml</code></td></tr>
+        <tr><td><code>host</code></td><td>Interface listen LIS (default <code>0.0.0.0</code>)</td></tr>
+        <tr><td><code>port</code></td><td>Port TCP tempat LIS menunggu koneksi alat</td></tr>
+        <tr><td><code>is_active</code></td><td>Hanya alat aktif yang dibukakan listener saat boot</td></tr>
+      </tbody>
+    </table>
+    <p>Di sisi <strong>alat</strong>: set Host = IP server LIS, Port = <code>port</code> di atas, protokol/format output sesuaikan dengan kolom <code>protocol</code>.</p>
+    <div class="alert">
+      <strong>Setelah perubahan port / alat baru → restart backend.</strong>
+    </div>
+
+    <h2 id="s9">9. Catatan Keterbatasan (Perlu Diwaspadai)</h2>
+    <p>Beberapa hal yang perlu diperhatikan untuk pemakaian produksi dengan data medis:</p>
+    <div class="alert danger">
+      <ol>
+        <li><strong>Frame number ASTM belum di-strip.</strong> ASTM ter-<em>frame</em> mengirim <code>&lt;STX&gt;</code> + nomor frame + isi + <code>&lt;CR&gt;&lt;ETX&gt;</code> + checksum. Kode membuang <code>&lt;STX&gt;</code>/<code>&lt;ETX&gt;</code> tetapi <strong>tidak</strong> nomor frame/checksum, sehingga record bisa jadi <code>2P|1|...</code> dan <strong>terlewat</strong> karena parser mencocokkan <code>parts[0] === 'P'</code>. Aman hanya bila alat mengirim baris polos tanpa framing.</li>
+        <li><strong>Checksum tidak divalidasi.</strong> Frame rusak diterima apa adanya sebagai hasil pasien.</li>
+        <li><strong>ACK dikirim per-chunk, bukan per-frame.</strong> Bila satu chunk TCP memuat dua frame, ACK bisa kurang; bila satu frame terpecah dua chunk, ACK bisa dobel. Sebagian analyzer toleran, sebagian bisa timeout/retry.</li>
+        <li><strong>Listener tidak reload otomatis</strong> — lihat peringatan di Bagian 2.</li>
+      </ol>
+    </div>
+
+    <h2 id="s10">10. Panduan Instalasi (Setup s/d Terima Hasil)</h2>
+
+    <h3>10.1. Prasyarat</h3>
+    <ul>
+      <li><strong>Database</strong>: MySQL / MariaDB (mis. lewat <strong>XAMPP</strong> — Control Panel → Start MySQL).</li>
+      <li><strong>Node.js</strong> 18.x / 20.x+.</li>
+      <li>Server LIS dan alat berada dalam <strong>satu jaringan</strong> (bisa saling ping).</li>
+    </ul>
+
+    <h3>10.2. Import Database (XAMPP)</h3>
+    <p>Dump <code>database/dump_contoh.sql</code> <strong>tidak</strong> memuat <code>CREATE DATABASE</code>, jadi buat dulu database-nya baru import ke dalamnya.</p>
+    <pre># path mysql XAMPP di macOS:
+MYSQL=/Applications/XAMPP/xamppfiles/bin/mysql
+# (Windows XAMPP: C:\xampp\mysql\bin\mysql.exe)
+
+# 1. buat database
+"$MYSQL" -u root -e "CREATE DATABASE IF NOT EXISTS geulis CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+
+# 2. import dump
+"$MYSQL" -u root geulis &lt; database/dump_contoh.sql
+
+# 3. verifikasi
+"$MYSQL" -u root geulis -e "SHOW TABLES;"</pre>
+    <p>Alternatif lewat <strong>phpMyAdmin</strong> (<code>http://localhost/phpmyadmin</code>): buat database <code>geulis</code> → tab <em>Import</em> → pilih <code>database/dump_contoh.sql</code> → <em>Go</em>.</p>
+
+    <h3>10.3. Konfigurasi Credential (<code>backend/.env</code>)</h3>
+    <p>Default XAMPP: user <code>root</code>, <strong>tanpa password</strong>. Isi <code>backend/.env</code>:</p>
+    <pre>PORT=3001
+JWT_SECRET=ganti-dengan-teks-acak-panjang
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=geulis
+INSTRUMENT_LISTENER_ENABLED=true</pre>
+    <div class="alert info">
+      Gunakan <code>127.0.0.1</code> (bukan <code>localhost</code>) agar driver <code>mysql2</code> konek via TCP ke MariaDB XAMPP. Jika MySQL Anda berpassword, isi <code>DB_PASSWORD</code>.
+    </div>
+
+    <h3>10.4. Jalankan Aplikasi</h3>
+    <pre># dari folder root proyek
+npm run install:all      # install dependency backend + frontend (sekali saja)
+npm start                # jalankan backend (:3001) + frontend (:5173)</pre>
+    <p>Akses: <strong>http://localhost:5173</strong></p>
+    <table>
+      <thead><tr><th>Login</th><th>Username</th><th>Password</th></tr></thead>
+      <tbody>
+        <tr><td>Administrator</td><td><code>admin</code></td><td><code><lihat SANDI_AWAL.txt></code></td></tr>
+        <tr><td>Petugas Lab</td><td><code>lab</code></td><td><code><lihat SANDI_AWAL.txt></code></td></tr>
+      </tbody>
+    </table>
+    <div class="alert info">
+      Password di atas berlaku untuk database hasil import ini. Untuk instalasi baru dari <code>schema.sql</code>, <code>ensureSeed</code> menetapkan password default yang sama.
+    </div>
+
+    <h3>10.5. Mendaftarkan Alat &amp; Menghubungkannya</h3>
+    <ol>
+      <li>Login sebagai <strong>admin</strong> → menu <strong>Alat Laboratorium</strong> → <strong>Tambah Alat</strong>.</li>
+      <li>Isi <code>code</code>, <code>name</code>, pilih <code>protocol</code> (mis. <code>astm</code>), dan <strong>Port TCP</strong> (mis. <code>5005</code>). Pastikan <code>is_active</code> menyala.</li>
+      <li><strong>Restart backend</strong> agar port listener terbuka (lihat <a href="#s2">Bagian 2</a>) — <code>pm2 restart geulis-backend</code> atau hentikan &amp; jalankan ulang <code>npm start</code>.</li>
+      <li>Di <strong>panel setting alat</strong> (mis. Sysmex): set <strong>Host/IP = IP server LIS</strong>, <strong>Port = 5005</strong>, mode output sesuai protokol.</li>
+      <li>Kirim satu sampel uji. Buka menu <strong>Alat Laboratorium → log</strong> untuk memastikan data masuk (<code>&lt;ENQ&gt;</code>, <code>&lt;ACK&gt;</code>, record <code>R|...</code>).</li>
+    </ol>
+
+    <h3>10.6. Alur Kerja Harian</h3>
+    <pre>Order masuk (SIMRS via /bridging/order  ATAU input manual di menu Permintaan Lab)
+      │
+      ▼
+Sampel diproses di alat → alat kirim hasil ke port LIS
+      │
+      ▼
+LIS cocokkan barcode → simpan ke lab_results (flag otomatis)
+      │
+      ▼
+Petugas cek/verifikasi di menu Hasil Lab → cetak laporan
+      │
+      ▼
+SIMRS tarik hasil via  GET /bridging/result/:simrs_order_id</pre>
+
+    <h3>10.7. Verifikasi Cepat &amp; Troubleshooting</h3>
+    <pre># cek backend hidup
+curl http://localhost:3001/api/health          # -> {"status":"ok",...}</pre>
+    <table>
+      <thead><tr><th>Gejala</th><th>Kemungkinan sebab &amp; solusi</th></tr></thead>
+      <tbody>
+        <tr><td>Backend gagal start / error DB</td><td>MySQL XAMPP belum Start; atau <code>.env</code> salah. Pakai <code>DB_HOST=127.0.0.1</code>.</td></tr>
+        <tr><td>Alat tidak bisa connect</td><td>Backend belum di-restart setelah tambah alat; port salah; firewall memblok port alat.</td></tr>
+        <tr><td><code>EADDRINUSE</code> di log</td><td>Port sudah dipakai proses lain — ganti port alat, restart backend.</td></tr>
+        <tr><td>Data masuk tapi hasil tak muncul</td><td>Barcode tidak cocok ke pasien/order — cek <code>medical_record_no</code> / <code>order_no</code> / <code>simrs_order_id</code>.</td></tr>
+        <tr><td>Login gagal</td><td>Pakai <code>admin/<lihat SANDI_AWAL.txt></code>. Data user tersimpan di tabel <code>users</code>.</td></tr>
+        <tr><td>Alat ASTM ter-<em>frame</em> record terlewat</td><td>Lihat <a href="#s9">Bagian 9</a> — kirim baris polos tanpa framing.</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <p class="footer">Dokumen ini dibuat berdasarkan kode di <code>backend/src/services/</code>. Perbarui bila logika listener/parser berubah.</p>
+  </div>
+</body>
+</html>

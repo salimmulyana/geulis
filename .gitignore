@@ -1,0 +1,37 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+
+# Manual dan brosur pabrikan alat laboratorium.
+#
+# Berkas ini berhak cipta pemiliknya masing-masing dan TIDAK boleh disebarkan
+# ulang lewat repositori ini, terlepas dari lisensi kode kita sendiri. Simpan
+# secara lokal untuk keperluan sendiri; pengetahuan protokol yang dipakai
+# proyek ini ditulis ulang dengan kata-kata sendiri di docs/.
+docs/*_handbuch.pdf
+docs/*brosur*.pdf
+docs/Mindray_*.pdf
+docs/iChroma*.pdf
+docs/SlideShare*.pdf
+docs/LIS Protocol Manual*.pdf
+frontend/public/*_manual.pdf
+
+# Sandi awal yang dibuat acak saat pemasangan. Tidak boleh masuk git.
+SANDI_AWAL.txt
+
+# Tangkapan layar.
+#
+# Layar GeuLIS menampilkan nama pasien dan nomor rekam medis. Tangkapan layar
+# dari sistem yang sedang berjalan karena itu memuat data pasien sungguhan --
+# dan pemindaian teks tidak bisa melihatnya, karena PNG adalah berkas biner.
+# Untuk dokumentasi, pakai tangkapan layar dari data karangan.
+screenshot/
+*.png
+*.jpg
+*.jpeg
+
+# Kecuali tangkapan layar dokumentasi, yang dibuat dari data karangan dan
+# sudah diperiksa satu per satu dengan MELIHATnya, bukan memindai teksnya.
+!docs/tangkapan/*.png

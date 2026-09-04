@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Alat Mindray BC-3600 — GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+      font-size: 0.85em;
+      line-height: 1.45;
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    td code { font-size: 0.85em; }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.1);
+      border-left-color: #ef4444;
+    }
+    .subtitle { color: var(--text-muted); margin-top: -0.5rem; }
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+    }
+    .toc ol { margin: 0.5rem 0; padding-left: 1.2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    ol li, ul li { margin: 0.3rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .footer { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+    .print-btn {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .print-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.2cm; }
+      body { background: #fff; color: #000; padding: 0; }
+      .container {
+        max-width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #000; box-shadow: none; border-radius: 0;
+      }
+      h1 { color: #000; border-bottom-color: #000; }
+      h2 { color: #000; border-bottom-color: #999; page-break-after: avoid; }
+      h3 { color: #000; page-break-after: avoid; }
+      p, li, strong, td, th, .subtitle { color: #000 !important; }
+      a { color: #000; text-decoration: none; }
+      pre {
+        background: #f4f4f4; color: #000; border: 1px solid #bbb;
+        page-break-inside: avoid; font-size: 0.75em;
+      }
+      code { background: #eee; color: #000; }
+      th { background: #e8e8e8 !important; color: #000; }
+      table, tr, img { page-break-inside: avoid; }
+      .toc { background: #f7f7f7; border: 1px solid #bbb; }
+      .toc a { color: #000; }
+      .alert, .alert.info, .alert.danger { background: #f7f7f7 !important; border-left: 4px solid #888; color: #000; }
+      .print-btn, .no-print { display: none !important; }
+      /* mulai Bagian A & B di halaman baru untuk kerapian */
+      div[style*="BAGIAN"], div[style*="background:var(--primary)"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button class="print-btn" onclick="window.print()">🖨️ Cetak</button>
+
+  <h1>Manual Alat — Mindray BC-3600</h1>
+  <p class="subtitle">Analyzer hematologi 3-part diff · terdaftar di GeuLIS sebagai <code>HTM001</code></p>
+
+  <div class="alert info">
+    <strong>📕 Manual resmi pabrik:</strong>
+    <a href="/BC-3600_manual.pdf" target="_blank" rel="noreferrer">BC-3600 Operator&rsquo;s Manual (PDF, 320 halaman)</a><br>
+    Halaman ini adalah ringkasan operasional dan panduan integrasi dengan GeuLIS.
+    Untuk perawatan, QC, dan kalibrasi rinci, buka manual resmi di atas.
+  </div>
+
+  <div class="toc">
+    <strong>Daftar Isi</strong>
+    <ol>
+      <li><a href="#koneksi">Cara alat terhubung ke GeuLIS</a></li>
+      <li><a href="#setting">Setting di panel alat</a></li>
+      <li><a href="#harian">Operasional harian</a></li>
+      <li><a href="#sampel">Aturan nomor sampel</a></li>
+      <li><a href="#parameter">21 parameter dan satuannya</a></li>
+      <li><a href="#flag">Arti flag dan tanda hasil</a></li>
+      <li><a href="#error">Pesan error yang sering muncul</a></li>
+      <li><a href="#masalah">Kalau hasil tidak masuk ke GeuLIS</a></li>
+      <li><a href="#spesifikasi">Spesifikasi ringkas</a></li>
+    </ol>
+  </div>
+
+  <h2 id="koneksi">1. Cara alat terhubung ke GeuLIS</h2>
+  <p>
+    <strong>GeuLIS yang menghubungi alat, bukan sebaliknya.</strong> Ini kebalikan dari kebanyakan
+    analyzer. Manual resmi lampiran D.3 menyatakan alat &ldquo;<em>monitors the message sent by
+    LIS</em>&rdquo; dan mengirim detak <code>0x02</code> tiap 3 detik setelah koneksi terbentuk.
+  </p>
+<pre>GeuLIS 192.168.1.14  ──menghubungi──▶  BC-3600 192.168.1.200:3600
+                     ◀── detak 0x02 tiap 3 detik
+                     ◀── hasil HL7 saat sampel selesai</pre>
+  <p>
+    Karena alat tidak pernah memulai koneksi, <strong>di menu alat memang tidak ada isian
+    &ldquo;IP server LIS&rdquo;</strong> &mdash; dan tidak dibutuhkan. Mencarinya hanya membuang waktu.
+  </p>
+  <table>
+    <tr><th>Item</th><th>Nilai</th></tr>
+    <tr><td>IP alat</td><td><code>192.168.1.200</code></td></tr>
+    <tr><td>Port data</td><td><code>3600</code></td></tr>
+    <tr><td>IP server GeuLIS</td><td><code>192.168.1.14</code></td></tr>
+    <tr><td>Protokol</td><td>HL7 v2.3.1 (MLLP)</td></tr>
+  </table>
+
+  <h2 id="setting">2. Setting di panel alat</h2>
+  <p>Menu <strong>Setup → System Setup → Transmission</strong>.</p>
+  <table>
+    <tr><th>Setting</th><th>Nilai</th><th>Catatan</th></tr>
+    <tr><td>Transmit type</td><td><code>Network port transmit</code></td><td>bukan serial</td></tr>
+    <tr><td>IP address</td><td><code>192.168.1.200</code></td><td>identitas alat sendiri</td></tr>
+    <tr><td>Subnet mask</td><td><code>255.255.255.0</code></td><td></td></tr>
+    <tr><td>Default gateway</td><td><code>192.168.1.1</code></td><td></td></tr>
+    <tr><td>Transmit protocol</td><td><code>HL7</code></td><td>pilihan lain: 15ID, 15ID+2 (tidak didukung)</td></tr>
+    <tr><td>ACK synchronous transmission</td><td>boleh dinyalakan</td><td>GeuLIS sudah membalas ACK^R01 yang sah</td></tr>
+    <tr><td>Auto retransmit</td><td><code>On</code></td><td>kirim ulang setelah jaringan pulih</td></tr>
+    <tr><td><strong>Auto transmit</strong></td><td><strong><code>On</code></strong></td><td>WAJIB &mdash; lihat peringatan di bawah</td></tr>
+  </table>
+
+  <div class="alert">
+    <strong>⚠️ Auto transmit adalah penyebab tersering &ldquo;alat nyambung tapi hasil kosong&rdquo;.</strong><br>
+    Perhatikan bedanya dengan <em>Auto <u>re</u>transmit</em> di kotak kanan &mdash; itu setting yang
+    berbeda. <strong>Auto transmit</strong> ada di baris paling bawah layar, sebaris dengan tulisan
+    <em>Whole blood</em>. Manual bagian 5.2.2: bila Off, &ldquo;the analyzer will <strong>not</strong>
+    send results to the external computer automatically&rdquo;.
+  </div>
+
+  <p><strong>Langkah untuk petugas lab:</strong></p>
+  <ol>
+    <li>Masuk ke layar Transmission.</li>
+    <li>Cari baris <strong>Auto transmit</strong> di bagian bawah.</li>
+    <li>Tekan lingkaran <strong>On</strong>.</li>
+    <li>Keluar lewat menu lain, lalu pilih <strong>Yes</strong> agar tersimpan.</li>
+  </ol>
+  <p>Aman: setting ini hanya mengatur pengiriman keluar, tidak memengaruhi cara alat memeriksa.</p>
+
+  <h2 id="harian">3. Operasional harian</h2>
+  <ul>
+    <li><strong>Nyalakan:</strong> saklar di belakang, inisialisasi 3&ndash;5 menit, lalu login.</li>
+    <li><strong>Lampu indikator:</strong> hijau menyala = siap; hijau berkedip = sedang jalan;
+      merah menyala = error; merah berkedip = jalan dengan error; kuning = standby.</li>
+    <li><strong>QC dulu, baru sampel pasien.</strong> Manual menyarankan QC harian dengan kontrol
+      level rendah, normal, dan tinggi.</li>
+    <li><strong>Volume sampel:</strong> whole blood 17&nbsp;&micro;L, predilute 146,34&nbsp;&micro;L
+      (dari 20&nbsp;&micro;L kapiler + 0,38&nbsp;mL diluen).</li>
+    <li><strong>Tabung:</strong> K2EDTA 1,5&ndash;2,2&nbsp;mg/mL.</li>
+    <li><strong>Batas waktu sampel:</strong> hitung jenis WBC dalam 12 jam pada suhu ruang, atau
+      24 jam bila disimpan 2&ndash;8&nbsp;&deg;C (hangatkan dulu 30 menit).</li>
+    <li><strong>Jangan</strong> menghitung sampel yang sama lebih dari 3 kali berturut-turut.</li>
+    <li><strong>Matikan lewat menu Shutdown</strong> (dengan probe cleanser), wajib setelah alat
+      jalan 24 jam terus-menerus. Jangan langsung cabut listrik.</li>
+    <li><strong>Rendam probe cleanser mingguan</strong> &mdash; prosesnya 20 menit.</li>
+  </ul>
+
+  <h2 id="sampel">4. Aturan nomor sampel</h2>
+  <div class="alert danger">
+    <strong>Salah ketik nomor sampel tidak memunculkan error &mdash; GeuLIS malah membuat pasien
+    baru</strong> bernama &ldquo;Pasien &lt;nomor&gt;&rdquo;. Karena alat tidak bisa menanyakan daftar order ke
+    LIS (protokol HL7 tidak menyediakannya), ketepatan nomor sampel sepenuhnya ada di tangan operator.
+  </div>
+  <p>Aturan dari manual (bagian 6.6.1):</p>
+  <ul>
+    <li>Panjang 1&ndash;20 karakter, tidak boleh kosong.</li>
+    <li><strong>Karakter terakhir harus angka.</strong></li>
+    <li>Nomor yang isinya hanya angka &ldquo;0&rdquo; dianggap tidak sah.</li>
+    <li>Huruf, angka, dan karakter khusus diperbolehkan.</li>
+  </ul>
+  <p>
+    Nomor sampel harus cocok dengan salah satu dari: nomor rekam medis, nomor order,
+    nomor permintaan, atau ID order SIMRS di GeuLIS.
+  </p>
+  <p>
+    <strong>Tips:</strong> alat mendukung <em>bar-code scanner USB</em> (manual 2.3.8 dan B.7.5).
+    Memakai scanner menghilangkan hampir semua risiko salah ketik. Ada 4 port USB di belakang alat.
+    Aktifkan juga <em>Sample ID auto increment</em> di Setup → Auxiliary bila penomoran berurutan.
+  </p>
+
+  <h2 id="parameter">5. 21 parameter dan satuannya</h2>
+  <p>Satuan di bawah adalah <strong>bawaan pabrik</strong>. Bisa diubah di Setup → Parameter units.</p>
+  <table>
+    <tr><th>Parameter</th><th>Satuan default</th><th>Parameter</th><th>Satuan default</th></tr>
+    <tr><td>WBC</td><td>10<sup>9</sup>/L</td><td>RDW-CV</td><td>None</td></tr>
+    <tr><td>Lymph#, Mid#, Gran#</td><td>10<sup>9</sup>/L</td><td>RDW-SD</td><td>fL</td></tr>
+    <tr><td>Lymph%, Mid%, Gran%</td><td>None</td><td>HCT</td><td>None (pecahan)</td></tr>
+    <tr><td>RBC</td><td>10<sup>12</sup>/L</td><td>PLT</td><td>10<sup>9</sup>/L</td></tr>
+    <tr><td>HGB</td><td>g/L</td><td>MPV</td><td>fL</td></tr>
+    <tr><td>MCV</td><td>fL</td><td>PDW</td><td>None</td></tr>
+    <tr><td>MCH</td><td>pg</td><td>PCT</td><td>mL/L</td></tr>
+    <tr><td>MCHC</td><td>g/L</td><td>P-LCR / P-LCC</td><td>None / 10<sup>9</sup>/L</td></tr>
+  </table>
+  <div class="alert">
+    <strong>Perhatikan satuan saat mengisi nilai rujukan di GeuLIS.</strong> Bawaan alat memakai
+    <strong>HGB dalam g/L</strong> (bukan g/dL) dan <strong>HCT sebagai pecahan</strong> (bukan persen).
+    Nilai rujukan di menu Tes Lab harus memakai satuan yang sama dengan yang dikirim alat, atau
+    flag tinggi/rendah akan salah.
+  </div>
+
+  <h2 id="flag">6. Arti flag dan tanda hasil</h2>
+  <table>
+    <tr><th>Tanda</th><th>Arti</th></tr>
+    <tr><td><code>H</code> / <code>L</code></td><td>Di atas / di bawah nilai rujukan</td></tr>
+    <tr><td><code>R</code></td><td>Hasil diragukan</td></tr>
+    <tr><td><code>*****</code></td><td>Hasil tidak sah</td></tr>
+    <tr><td><code>+++++</code></td><td>Di luar rentang tampilan alat</td></tr>
+    <tr><td><code>E</code> / <code>e</code></td><td>Hasil diedit manual / ikut berubah karena editan</td></tr>
+    <tr><td><code>R1</code>&ndash;<code>R4</code>, <code>Rm</code></td><td>Histogram WBC abnormal (kemungkinan sel muda, limfosit atipik, dsb)</td></tr>
+    <tr><td><code>Pm</code>, <code>PS</code>, <code>PL</code></td><td>Histogram PLT abnormal (batas kabur, trombosit terlalu kecil / besar)</td></tr>
+  </table>
+  <ul>
+    <li>Bila WBC &lt; 0,5&times;10<sup>9</sup>/L, alat <strong>tidak</strong> menghitung jenis leukosit
+      dan semua parameter terkait menjadi <code>*****</code>.</li>
+    <li>Bila PLT &lt; 100&times;10<sup>9</sup>/L, manual menyarankan pemeriksaan ulang.</li>
+    <li><strong>Flag H/L di GeuLIS dihitung ulang</strong> dari nilai rujukan di menu Tes Lab,
+      bukan diambil dari alat. Tes yang terbentuk otomatis belum punya nilai rujukan, sehingga
+      semuanya akan tampak <code>normal</code> sampai rujukannya diisi.</li>
+  </ul>
+
+  <h2 id="error">7. Pesan error yang sering muncul</h2>
+  <table>
+    <tr><th>Pesan di alat</th><th>Tindakan</th></tr>
+    <tr><td>Rinse / Diluent / Lyse level low atau empty</td><td>Ganti wadah reagen yang bersangkutan</td></tr>
+    <tr><td>Waste full</td><td>Kosongkan wadah limbah</td></tr>
+    <tr><td>WBC / RBC clog</td><td>Tekan &ldquo;Clear Error&rdquo;, lalu jalankan Zap atau Flush aperture</td></tr>
+    <tr><td>WBC / RBC bubbles</td><td>Prime reagen; bila sering terjadi, periksa dan ganti air filter</td></tr>
+    <tr><td>Background abnormal</td><td>Periksa sumber gangguan listrik dan grounding, ganti diluen, ulangi background</td></tr>
+    <tr><td>Temperature exceeds normal range</td><td>Turunkan suhu ruangan ke 15&ndash;35&nbsp;&deg;C</td></tr>
+    <tr><td>Front cover open</td><td>Tutup penutup depan</td></tr>
+    <tr><td>LIS communication failure</td><td>Periksa kabel jaringan; lihat bagian 8 di bawah</td></tr>
+    <tr><td>Diluent / Rinse / Lyse expired</td><td>Ganti dengan reagen baru</td></tr>
+  </table>
+  <p>
+    Jangan menjalankan sampel saat error background masih ada &mdash; hasilnya tidak dapat dipercaya.
+  </p>
+
+  <h2 id="masalah">8. Kalau hasil tidak masuk ke GeuLIS</h2>
+  <p>Periksa berurutan:</p>
+  <ol>
+    <li><strong>Ikon komunikasi di layar alat</strong> (dekat jam). Berkedip = sedang mengirim,
+      merah = gangguan komunikasi, tidak terlihat = tidak ada pengiriman sama sekali.</li>
+    <li><strong>Auto transmit</strong> sudah <code>On</code>? Ini penyebab paling sering.</li>
+    <li><strong>Kabel LAN</strong> terpasang dan alat menyala.</li>
+    <li>Di GeuLIS, buka menu <strong>Alat</strong> &mdash; lihat apakah ada baris
+      &ldquo;koneksi ke 192.168.1.200:3600 terbentuk&rdquo;.</li>
+    <li>Coba <strong>kirim manual</strong>: menu <strong>Review</strong> di alat, pilih hasil,
+      tekan <em>Transmit</em>. Maksimal 500 record sekali kirim.</li>
+  </ol>
+  <div class="alert info">
+    <strong>Hasil lama tidak hilang.</strong> Alat menyimpan 40.000 hasil lengkap dengan histogram.
+    Bila LIS sempat mati, hasil bisa dikirim ulang kapan saja lewat menu Review.
+  </div>
+
+  <h2 id="spesifikasi">9. Spesifikasi ringkas</h2>
+  <table>
+    <tr><th>Item</th><th>Nilai</th></tr>
+    <tr><td>Jenis</td><td>Analyzer hematologi otomatis, 3-part diff</td></tr>
+    <tr><td>Metode</td><td>Impedansi (WBC, RBC, PLT) &middot; kolorimetri (HGB)</td></tr>
+    <tr><td>Kecepatan</td><td>minimal 60 sampel per jam</td></tr>
+    <tr><td>Penyimpanan hasil</td><td>40.000 sampel (21 parameter + 3 histogram)</td></tr>
+    <tr><td>Reagen</td><td>M-30D diluen &middot; M-30CFL lyse &middot; M-30R rinse &middot; probe cleanser</td></tr>
+    <tr><td>Kontrol / kalibrator</td><td>B30 / S30</td></tr>
+    <tr><td>Suhu operasi</td><td>optimal 15&ndash;30&nbsp;&deg;C (batas 15&ndash;35&nbsp;&deg;C)</td></tr>
+    <tr><td>Kelembapan</td><td>30&ndash;85 %</td></tr>
+    <tr><td>Listrik</td><td>100&ndash;240 V, &le;180 VA, 50/60 Hz &middot; sekring 250V T3.15AH</td></tr>
+    <tr><td>Dimensi / berat</td><td>395 &times; 445 &times; 450 mm &middot; &le;28 kg</td></tr>
+    <tr><td>Antarmuka</td><td>1 LAN (TCP/IP) &middot; 1 RS-232 &middot; 4 USB</td></tr>
+    <tr><td>Perangkat opsional</td><td>keyboard, mouse, printer USB, <strong>barcode scanner USB</strong></td></tr>
+  </table>
+
+  <hr>
+  <p class="footer">
+    Disarikan dari BC-3600 Operator&rsquo;s Manual (320 halaman) dan diverifikasi langsung terhadap
+    alat pada 3 September 2026. Untuk detail perawatan, QC, dan kalibrasi, buka
+    <a href="/BC-3600_manual.pdf" target="_blank" rel="noreferrer">manual resmi PDF</a>.
+  </p>
+</div>
+
+</body>
+</html>

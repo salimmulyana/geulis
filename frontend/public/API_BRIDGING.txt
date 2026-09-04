@@ -1,0 +1,143 @@
+# Dokumentasi API Bridging GeuLIS
+
+Dokumen ini berisi panduan teknis bagi *developer* SIMRS atau sistem eksternal lainnya untuk berintegrasi secara langsung dengan GeuLIS (Laboratory Information System).
+
+Semua Endpoint dalam dokumen ini memerlukan **Autentikasi API Key**. Anda dapat membuat API Key melalui menu **Pengaturan Sistem > Integrasi API** di LIS.
+
+> [!WARNING]
+> Jaga kerahasiaan API Key Anda. Jangan membagikannya ke pihak yang tidak berkepentingan karena memberikan hak akses untuk membaca dan menulis data medis pasien.
+
+---
+
+## 1. Otentikasi (Authentication)
+
+Setiap *request* yang dikirimkan ke API Bridging wajib menyertakan API Key Anda di bagian *Header*.
+
+| Key | Value | Keterangan |
+| :--- | :--- | :--- |
+| `x-api-key` | `khanza_...` | API Key yang di-*generate* dari sistem LIS |
+| `Content-Type` | `application/json` | Format body *request* |
+
+---
+
+## 2. Mengirim Order (Permintaan Lab)
+
+Gunakan endpoint ini untuk mengirimkan data pasien beserta daftar pemeriksaan lab yang dipesan.
+Sistem LIS akan otomatis membuatkan data rekam medis jika belum terdaftar.
+
+*   **URL**: `/bridging/order`
+*   **Method**: `POST`
+
+### Payload Request (JSON)
+
+| Parameter | Tipe | Wajib | Keterangan |
+| :--- | :--- | :--- | :--- |
+| `simrs_order_id` | String | Ya | Nomor Order dari sistem Anda. (Digunakan sebagai referensi). Harus unik. |
+| `medical_record_no` | String | Ya | Nomor Rekam Medis (RM) pasien. |
+| `patient_name` | String | Ya | Nama lengkap pasien. |
+| `gender` | String | Tidak | Jenis kelamin: `L` (Laki-laki) atau `P` (Perempuan). Default: `L`. |
+| `birth_date` | Date | Tidak | Tanggal lahir pasien format `YYYY-MM-DD`. |
+| `priority` | String | Tidak | Prioritas: `normal`, `cito`, `stat`. Default: `normal`. |
+| `notes` | String | Tidak | Catatan atau klinis singkat dari dokter. |
+| `tests` | Array | Ya | *Array of string* berisi **Kode Pemeriksaan**. (Contoh: `["HGB", "LEU", "PLT"]`). |
+
+### Contoh Request
+
+```bash
+curl -X POST http://[IP_SERVER_LIS]:3001/bridging/order \
+  -H "x-api-key: khanza_CONTOH123gh5678" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "simrs_order_id": "ORD-20231015-001",
+    "medical_record_no": "RM-098123",
+    "patient_name": "Budi Santoso",
+    "gender": "L",
+    "birth_date": "1990-05-15",
+    "priority": "cito",
+    "notes": "Suspect DBD",
+    "tests": ["HGB", "LEU", "PLT", "HCT"]
+  }'
+```
+
+### Response Sukses (201 Created)
+```json
+{
+  "message": "Order berhasil diterima",
+  "data": {
+    "request_no": "REQ20231015123456",
+    "simrs_order_id": "ORD-20231015-001",
+    "patient_id": 15,
+    "request_id": 42
+  }
+}
+```
+
+> [!NOTE]
+> Jika Anda mengirimkan `simrs_order_id` yang sama untuk kedua kalinya, sistem akan menolak request tersebut dengan status **409 Conflict** guna menghindari duplikasi order.
+
+---
+
+## 3. Menarik Hasil Lab (Get Results)
+
+Gunakan endpoint ini untuk mengambil nilai hasil akhir laboratorium yang sudah selesai dikerjakan berdasarkan Nomor Order dari aplikasi Anda (`simrs_order_id`).
+
+*   **URL**: `/bridging/result/:simrs_order_id`
+*   **Method**: `GET`
+
+### Contoh Request
+
+```bash
+curl -X GET http://[IP_SERVER_LIS]:3001/bridging/result/ORD-20231015-001 \
+  -H "x-api-key: khanza_CONTOH123gh5678"
+```
+
+### Response Sukses (200 OK)
+
+```json
+{
+  "simrs_order_id": "ORD-20231015-001",
+  "request_no": "REQ20231015123456",
+  "status": "completed",
+  "patient": {
+    "medical_record_no": "RM-098123",
+    "name": "Budi Santoso",
+    "gender": "L",
+    "birth_date": "1990-05-15"
+  },
+  "results": [
+    {
+      "test_code": "HGB",
+      "test_name": "Hemoglobin",
+      "result_value": "11.5",
+      "unit": "g/dL",
+      "reference": "13.0 - 17.0",
+      "flag": "L",
+      "result_time": "2023-10-15T09:30:00.000Z",
+      "status": "completed"
+    },
+    {
+      "test_code": "LEU",
+      "test_name": "Leukosit",
+      "result_value": "3.5",
+      "unit": "10^3/uL",
+      "reference": "4.0 - 10.0",
+      "flag": "L",
+      "result_time": "2023-10-15T09:30:00.000Z",
+      "status": "completed"
+    },
+    {
+      "test_code": "PLT",
+      "test_name": "Trombosit",
+      "result_value": "80",
+      "unit": "10^3/uL",
+      "reference": "150 - 450",
+      "flag": "L",
+      "result_time": "2023-10-15T09:30:00.000Z",
+      "status": "completed"
+    }
+  ]
+}
+```
+
+> [!TIP]
+> Kolom `flag` berisi indikator abnormalitas (misalnya: `L` untuk Low, `H` untuk High, atau `LL`/`HH` untuk nilai kritis). Jika hasil normal, kolom `flag` bisa bernilai `null` atau kosong.

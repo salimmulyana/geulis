@@ -1,0 +1,142 @@
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #243044;
+  --border: #2d3a4f;
+  --text: #e8edf4;
+  --muted: #8b9cb3;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --radius: 10px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { min-height: 100vh; }
+
+a { color: var(--primary); text-decoration: none; }
+
+input, select, textarea, button {
+  font: inherit;
+  color: inherit;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
+
+button, .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  background: var(--primary);
+  color: #fff;
+}
+
+button:hover, .btn:hover { background: var(--primary-hover); }
+button.secondary, .btn.secondary { background: var(--surface2); color: var(--text); }
+button.danger { background: var(--danger); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 0.65rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge.pending { background: #422006; color: #fbbf24; }
+.badge.processing { background: #1e3a5f; color: #60a5fa; }
+.badge.completed, .badge.final { background: #14532d; color: #4ade80; }
+.badge.critical { background: #450a0a; color: #f87171; }
+.badge.cito { background: #450a0a; color: #fca5a5; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.form-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.form-group label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.35rem; }
+
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
+.error-msg { color: var(--danger); font-size: 0.875rem; margin-top: 0.5rem; }
+
+.section-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.page-desc { color: var(--muted); font-size: 0.875rem; margin-bottom: 1.25rem; line-height: 1.5; }
+.tab-row { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+.btn-sm { padding: 0.3rem 0.55rem; font-size: 0.8rem; }
+.actions-cell { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+.role-select { max-width: 220px; margin-bottom: 1rem; }
+.perm-table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+.perm-table { font-size: 0.82rem; }
+.perm-table th, .perm-table td { padding: 0.4rem 0.6rem; }
+.perm-table .col-check { width: 40px; text-align: center; }
+.perm-table .perm-name { color: var(--muted); }
+.perm-table tbody tr:hover { background: var(--surface2); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center;
+  justify-content: center; z-index: 100; padding: 1rem;
+}
+.modal { width: 100%; max-width: 400px; }
+.modal-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+
+.protocol-hint {
+  font-size: 0.78rem; color: var(--muted); margin-top: 0.75rem; padding: 0.5rem 0.65rem;
+  background: var(--bg); border-radius: 6px; border: 1px solid var(--border); font-family: ui-monospace, monospace;
+}
+.instrument-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.instrument-grid.single { grid-template-columns: 1fr; }
+@media (max-width: 960px) { .instrument-grid { grid-template-columns: 1fr !important; } }
+.log-preview { max-width: 280px; overflow: hidden; text-overflow: ellipsis; font-size: 0.75rem; color: var(--muted); }
+
+/* Keterangan lisensi di kaki sidebar.
+   Sengaja kecil dan redup: ini pemenuhan AGPL Pasal 13, bukan menu -- tidak
+   boleh bersaing perhatian dengan tautan navigasi di atasnya. */
+.sidebar-lisensi {
+  margin-top: auto;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  opacity: 0.65;
+}
+.sidebar-lisensi a {
+  color: inherit;
+  text-decoration: underline;
+}
+.sidebar-lisensi a:hover { opacity: 1; }
+.sidebar-lisensi-penafian {
+  margin-top: 0.35rem;
+  font-style: italic;
+}

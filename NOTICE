@@ -1,0 +1,50 @@
+GeuLIS — Sistem Informasi Laboratorium
+Copyright (C) 2026 Salim Mulyana
+
+Program ini adalah perangkat lunak bebas: Anda boleh menyebarkannya kembali
+dan/atau mengubahnya di bawah ketentuan GNU Affero General Public License
+sebagaimana diterbitkan Free Software Foundation, versi 3.
+
+Program ini disebarkan dengan harapan berguna, tetapi TANPA JAMINAN APA PUN;
+bahkan tanpa jaminan tersirat mengenai KELAYAKAN JUAL atau KESESUAIAN UNTUK
+KEPERLUAN TERTENTU. Lihat GNU Affero General Public License untuk lebih
+lengkapnya, pada berkas LICENSE.
+
+Baca juga DISCLAIMER.md — penafian tambahan yang khusus berlaku karena
+perangkat lunak ini dipakai dalam pelayanan kesehatan.
+
+--------------------------------------------------------------------------
+MEREK DAGANG
+--------------------------------------------------------------------------
+
+"GeuLIS" adalah nama proyek ini dan bukan bagian dari pemberian lisensi.
+AGPL memberi Anda hak atas KODE, bukan atas NAMA.
+
+Anda bebas memodifikasi dan menyebarkan perangkat lunak ini — memang itu
+maksudnya. Tetapi versi yang sudah Anda ubah TIDAK BOLEH disebut "GeuLIS"
+atau nama yang cukup mirip sehingga membingungkan, kecuali dengan izin
+tertulis pemegang hak cipta.
+
+Alasannya bukan kepemilikan, melainkan keselamatan: rumah sakit yang
+mendengar "kami memakai GeuLIS" perlu tahu perangkat lunak mana yang
+sebenarnya berjalan. Versi ubahan yang memakai nama sama membuat laporan
+kesalahan, peringatan keamanan, dan tanya jawab dukungan tertuju ke perangkat
+lunak yang keliru — dan pada sistem yang menandai nilai kritis, salah alamat
+seperti itu punya akibat.
+
+Beri nama sendiri untuk versi Anda, dan sebut GeuLIS sebagai asalnya. Menyebut
+"berbasis GeuLIS" atau "fork dari GeuLIS" selalu diperbolehkan.
+
+--------------------------------------------------------------------------
+KARYA PIHAK KETIGA
+--------------------------------------------------------------------------
+
+Perangkat lunak ini memakai pustaka pihak ketiga di bawah lisensi masing-masing
+(sebagian besar MIT dan BSD). Rinciannya ada pada berkas package.json dan
+package-lock.json di setiap bagian.
+
+Repositori ini TIDAK memuat manual atau dokumentasi pabrikan alat laboratorium.
+Manual semacam itu berhak cipta pemiliknya masing-masing dan tidak boleh
+disebarkan ulang. Pengetahuan mengenai protokol alat yang ada di dokumentasi
+proyek ini berasal dari perekaman lalu lintas jaringan alat yang sebenarnya,
+ditulis dengan kata-kata sendiri.

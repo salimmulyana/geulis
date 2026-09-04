@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alur Kerja Petugas Lab — GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+      font-size: 0.85em;
+      line-height: 1.45;
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    td code { font-size: 0.85em; }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.1);
+      border-left-color: #ef4444;
+    }
+    .subtitle { color: var(--text-muted); margin-top: -0.5rem; }
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+    }
+    .toc ol { margin: 0.5rem 0; padding-left: 1.2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    ol li, ul li { margin: 0.3rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .footer { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+    .print-btn {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .print-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.2cm; }
+      body { background: #fff; color: #000; padding: 0; }
+      .container {
+        max-width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #000; box-shadow: none; border-radius: 0;
+      }
+      h1 { color: #000; border-bottom-color: #000; }
+      h2 { color: #000; border-bottom-color: #999; page-break-after: avoid; }
+      h3 { color: #000; page-break-after: avoid; }
+      p, li, strong, td, th, .subtitle { color: #000 !important; }
+      a { color: #000; text-decoration: none; }
+      pre {
+        background: #f4f4f4; color: #000; border: 1px solid #bbb;
+        page-break-inside: avoid; font-size: 0.75em;
+      }
+      code { background: #eee; color: #000; }
+      th { background: #e8e8e8 !important; color: #000; }
+      table, tr, img { page-break-inside: avoid; }
+      .toc { background: #f7f7f7; border: 1px solid #bbb; }
+      .toc a { color: #000; }
+      .alert, .alert.info, .alert.danger { background: #f7f7f7 !important; border-left: 4px solid #888; color: #000; }
+      .print-btn, .no-print { display: none !important; }
+      /* mulai Bagian A & B di halaman baru untuk kerapian */
+      div[style*="BAGIAN"], div[style*="background:var(--primary)"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button class="print-btn" onclick="window.print()">🖨️ Cetak</button>
+
+  <h1>Alur Kerja Petugas Lab</h1>
+  <p class="subtitle">Dari permintaan dokter di SIMRS &rarr; GeuLIS &rarr; alat &rarr; kembali ke rekam medis</p>
+
+  <div class="alert info">
+    <strong>Satu aturan yang menentukan segalanya:</strong> nomor sampel yang diketik di alat
+    harus <strong>nomor rekam medis pasien</strong>. Kalau nomornya salah, hasil tetap masuk
+    tetapi menempel ke pasien yang keliru &mdash; dan itu tidak menimbulkan pesan error apa pun.
+  </div>
+
+<pre>  SIMRS Khanza          GeuLIS                BC-11
+      │                    │                    │
+   ①  ├── Kirim Permintaan ─▶                   │
+      │                    │                    │
+   ②  │                    ◀── LIS Fetch ───────┤  scan no. RM
+      │                    ├── nama pasien ────▶│
+      │                    │                    │
+   ③  │                    ◀── hasil otomatis ──┤  jalankan sampel
+      │                    │                    │
+   ④  │              verifikasi hasil           │
+      │                    │                    │
+   ⑤  ◀── Ambil Hasil ─────┤                    │</pre>
+
+  <h2 id="s1">① Kirim permintaan dari SIMRS ke GeuLIS</h2>
+  <p><em>Dilakukan di komputer SIMRS Khanza.</em></p>
+  <ol class="steps">
+    <li>Buka menu <strong>Laborat &rarr; Data Permintaan Laboratorium</strong>.</li>
+    <li>Cari dan klik permintaan pasien yang akan dikerjakan.</li>
+    <li>Klik <strong>Kirim Permintaan ke GeuLIS</strong> di daftar menu sebelah kiri.</li>
+    <li>Muncul pesan <em>&ldquo;Permintaan terkirim ke GeuLIS&rdquo;</em> beserta nomor LIS.</li>
+  </ol>
+  <div class="alert">
+    <strong>Nomor LIS berbeda dengan nomor permintaan SIMRS &mdash; itu wajar.</strong>
+    SIMRS memakai <code>PK2026...</code>, GeuLIS memakai <code>REQ2026...</code>.
+    Keduanya sudah saling terhubung otomatis. Petugas tidak perlu mencatat nomor LIS.
+  </div>
+  <p><strong>Langkah ini wajib lebih dulu.</strong> Kalau dilewati, alat tidak akan menemukan pasiennya.</p>
+
+  <h2 id="s2">② Ambil identitas pasien di alat</h2>
+  <p><em>Dilakukan di layar BC-11.</em></p>
+  <ol class="steps">
+    <li>Tekan <strong>Next Sample</strong>.</li>
+    <li>Pada kolom <strong>Sample ID</strong>, <strong>pindai barcode nomor rekam medis</strong>
+        pasien (atau ketik manual, contoh <code>101946</code>).</li>
+    <li>Tekan tombol <strong>LIS Fetch</strong>.</li>
+    <li>Nama pasien terisi sendiri &rarr; tekan <strong>OK</strong>.</li>
+  </ol>
+  <div class="alert danger">
+    <strong>⚠️ Kalau nama pasien TIDAK muncul, berhenti dulu.</strong> Artinya nomornya salah
+    ketik, atau permintaan belum dikirim dari SIMRS (langkah ①).
+    <br><br>
+    Jangan mengetik nama pasien manual lalu tetap menjalankan sampel. Hasilnya akan tersimpan
+    sebagai pasien baru di GeuLIS dan <strong>tidak akan bisa ditarik kembali ke SIMRS</strong>.
+    Perbaiki dulu nomornya, lalu ulangi LIS Fetch.
+  </div>
+  <p>
+    <strong>Jangan memakai nomor urut alat</strong> seperti 121, 122, 123. Nomor itu hanya
+    penomoran internal alat dan tidak dikenal GeuLIS maupun SIMRS.
+  </p>
+
+  <h2 id="s3">③ Jalankan sampel</h2>
+  <ol class="steps">
+    <li>Pastikan QC harian sudah dijalankan.</li>
+    <li>Masukkan sampel, jalankan seperti biasa.</li>
+    <li>Hasil terkirim sendiri ke GeuLIS &mdash; <strong>tidak perlu menekan tombol kirim</strong>.</li>
+  </ol>
+  <p>
+    Untuk memastikan, buka menu <strong>Hasil</strong> di GeuLIS. Hasil pasien tersebut
+    akan muncul dalam beberapa detik.
+  </p>
+
+  <h2 id="s4">④ Periksa dan verifikasi di GeuLIS</h2>
+  <p><em>Dilakukan di web GeuLIS oleh petugas yang berwenang.</em></p>
+  <ol class="steps">
+    <li>Buka menu <strong>Hasil</strong>.</li>
+    <li>Periksa nilainya. Yang di luar batas ditandai <code>low</code>, <code>high</code>,
+        atau <code>critical</code>.</li>
+    <li>Tekan <strong>Verifikasi</strong>.</li>
+  </ol>
+  <div class="alert">
+    <strong>Selama belum diverifikasi, hasil TIDAK bisa ditarik ke SIMRS.</strong>
+    Ini disengaja &mdash; supaya angka yang belum diperiksa petugas tidak masuk ke rekam medis pasien.
+  </div>
+  <p>
+    Hasil bertanda <code>critical</code> berarti melewati ambang nilai kritis lab dan
+    <strong>harus segera dilaporkan ke dokter</strong>, tidak cukup hanya diverifikasi.
+  </p>
+
+  <h2 id="s5">⑤ Tarik hasil ke SIMRS</h2>
+  <p><em>Kembali di komputer SIMRS Khanza.</em></p>
+  <ol class="steps">
+    <li>Buka kembali <strong>Data Permintaan Laboratorium</strong>.</li>
+    <li>Pilih permintaan pasien yang sama.</li>
+    <li>Klik <strong>Ambil Hasil dari GeuLIS</strong>.</li>
+    <li>Form <strong>Periksa Laboratorium</strong> terbuka dengan nilai sudah terisi.</li>
+    <li>Periksa sekali lagi, lalu <strong>Simpan</strong>.</li>
+  </ol>
+  <p>Setelah disimpan, hasil resmi masuk rekam medis pasien di SIMRS dan bisa dicetak.</p>
+  <div class="alert info">
+    Kalau muncul pesan <em>&ldquo;Belum ada hasil yang sudah diverifikasi&rdquo;</em>, berarti
+    langkah ④ belum dikerjakan. Kembali ke GeuLIS dan verifikasi dulu.
+  </div>
+
+  <h2 id="masalah">Kalau ada yang tidak beres</h2>
+  <table>
+    <tr><th>Gejala</th><th>Penyebab</th><th>Tindakan</th></tr>
+    <tr><td>LIS Fetch tidak memunculkan nama</td><td>Nomor RM salah, atau permintaan belum dikirim</td><td>Periksa nomor; ulangi langkah ①</td></tr>
+    <tr><td>Hasil tidak muncul di GeuLIS</td><td><code>Auto Communicate</code> di alat mati</td><td>Setup &rarr; Communication &rarr; nyalakan</td></tr>
+    <tr><td>Muncul pasien bernama angka saja</td><td>Sampel dijalankan dengan nomor yang tidak terdaftar</td><td>Kirim ulang hasil dari menu Review alat dengan no. RM yang benar</td></tr>
+    <tr><td>&ldquo;Belum ada hasil yang diverifikasi&rdquo;</td><td>Hasil masih <code>preliminary</code></td><td>Verifikasi dulu di GeuLIS</td></tr>
+    <tr><td>&ldquo;Sudah pernah dikirim ke GeuLIS&rdquo;</td><td>Permintaan yang sama dikirim dua kali</td><td>Tidak masalah, lanjutkan ke langkah ②</td></tr>
+  </table>
+
+  <hr>
+  <p class="footer">
+    Manual alat: <a href="/BC-11.html">Mindray BC-11</a> &middot; <a href="/KOMUNIKASI_ALAT.html">Komunikasi alat</a>
+  </p>
+</div>
+
+</body>
+</html>

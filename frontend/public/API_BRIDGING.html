@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentasi API Bridging GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dokumentasi API Bridging GeuLIS</h1>
+    <p>Dokumen ini berisi panduan teknis bagi <em>developer</em> SIMRS atau sistem eksternal lainnya untuk berintegrasi secara langsung dengan <strong>GeuLIS (Laboratory Information System)</strong>.</p>
+    
+    <div class="alert">
+      <strong>⚠️ Peringatan Keamanan:</strong> Semua endpoint di bawah ini memerlukan <strong>API Key</strong>. Jaga kerahasiaan API Key Anda dengan baik karena ia memberikan hak akses untuk membaca dan mengubah data medis pasien!
+    </div>
+
+    <h2>1. Autentikasi (Header)</h2>
+    <p>Setiap <em>request</em> wajib menyertakan API Key Anda di dalam <strong>Header</strong>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Key (Nama Header)</th>
+          <th>Value (Isi Header)</th>
+          <th>Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>x-api-key</code></td>
+          <td><code>khanza_...</code></td>
+          <td>Kunci rahasia yang di-generate dari menu LIS</td>
+        </tr>
+        <tr>
+          <td><code>Content-Type</code></td>
+          <td><code>application/json</code></td>
+          <td>Bentuk paket data yang dikirim</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2. Mengirim Order (Permintaan Lab)</h2>
+    <p>Endpoint ini dipakai SIMRS untuk mengirimkan data pasien beserta daftar periksa lab. Jika pasien belum terdaftar, LIS akan otomatis membuatkannya.</p>
+    <ul>
+      <li><strong>URL:</strong> <code>/bridging/order</code></li>
+      <li><strong>Method:</strong> <code>POST</code></li>
+    </ul>
+
+    <h3>Parameter (JSON Body)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Wajib?</th>
+          <th>Tipe Data</th>
+          <th>Contoh / Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>simrs_order_id</strong></td><td>Ya</td><td>String</td><td>Nomor Order dari SIMRS (misal: "ORD-001")</td></tr>
+        <tr><td><strong>medical_record_no</strong></td><td>Ya</td><td>String</td><td>Nomor Rekam Medis (RM) pasien</td></tr>
+        <tr><td><strong>patient_name</strong></td><td>Ya</td><td>String</td><td>Nama Lengkap Pasien</td></tr>
+        <tr><td>gender</td><td>Tidak</td><td>String</td><td>"L" (Laki-laki) atau "P" (Perempuan). Default: L</td></tr>
+        <tr><td>birth_date</td><td>Tidak</td><td>Date</td><td>Format "YYYY-MM-DD"</td></tr>
+        <tr><td>priority</td><td>Tidak</td><td>String</td><td>"normal", "cito", atau "stat". Default: normal</td></tr>
+        <tr><td>notes</td><td>Tidak</td><td>String</td><td>Catatan singkat dari dokter pengirim</td></tr>
+        <tr><td><strong>tests</strong></td><td>Ya</td><td>Array</td><td>Kode tes, misal: <code>["HGB", "LEU", "PLT"]</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Contoh Request (JSON Body)</h3>
+<pre>{
+  "simrs_order_id": "ORD-20231015-001",
+  "medical_record_no": "RM-098123",
+  "patient_name": "Budi Santoso",
+  "gender": "L",
+  "birth_date": "1990-05-15",
+  "priority": "cito",
+  "tests": [
+    "HGB", 
+    "LEU", 
+    "PLT"
+  ]
+}</pre>
+
+    <h3>Contoh Kirim JSON via Kode Program</h3>
+    <p>Berikut adalah contoh cara mengirimkan JSON di atas menggunakan bahasa pemrograman umum:</p>
+    
+    <h4>1. Menggunakan PHP (cURL)</h4>
+<pre>&lt;?php
+$url = "http://[IP_SERVER_LIS]:3001/bridging/order";
+$apiKey = "khanza_CONTOH123gh5678";
+
+$data = array(
+    "simrs_order_id" => "ORD-20231015-001",
+    "medical_record_no" => "RM-098123",
+    "patient_name" => "Budi Santoso",
+    "gender" => "L",
+    "birth_date" => "1990-05-15",
+    "priority" => "cito",
+    "tests" => array("HGB", "LEU", "PLT")
+);
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "Content-Type: application/json",
+    "x-api-key: " . $apiKey
+));
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+echo $response;
+?&gt;</pre>
+
+    <h4>2. Menggunakan Java (HttpURLConnection)</h4>
+<pre>import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class BridgingLIS {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL("http://[IP_SERVER_LIS]:3001/bridging/order");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("x-api-key", "khanza_CONTOH123gh5678");
+            conn.setDoOutput(true);
+
+            String jsonInputString = "{"
+                + "\"simrs_order_id\": \"ORD-20231015-001\","
+                + "\"medical_record_no\": \"RM-098123\","
+                + "\"patient_name\": \"Budi Santoso\","
+                + "\"gender\": \"L\","
+                + "\"birth_date\": \"1990-05-15\","
+                + "\"priority\": \"cito\","
+                + "\"tests\": [\"HGB\", \"LEU\", \"PLT\"]"
+                + "}";
+
+            try(OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int code = conn.getResponseCode();
+            System.out.println("Response Code: " + code);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+</pre>
+
+    <h3>Contoh Balasan (Sukses)</h3>
+<pre>{
+  "message": "Order berhasil diterima",
+  "data": {
+    "request_no": "REQ20231015123456",
+    "simrs_order_id": "ORD-20231015-001",
+    "patient_id": 15,
+    "request_id": 42
+  }
+}</pre>
+
+
+    <h2>3. Menarik Hasil Lab</h2>
+    <p>Endpoint ini dipakai SIMRS untuk mengambil nilai hasil akhir laboratorium yang sudah selesai dikerjakan.</p>
+    <ul>
+      <li><strong>URL:</strong> <code>/bridging/result/:simrs_order_id</code></li>
+      <li><strong>Method:</strong> <code>GET</code></li>
+    </ul>
+
+    <h3>Contoh Request</h3>
+<pre>curl -X GET http://[IP_SERVER_LIS]:3001/bridging/result/ORD-20231015-001 \
+  -H "x-api-key: khanza_CONTOH123gh5678"</pre>
+
+    <h3>Contoh Balasan (Sukses)</h3>
+<pre>{
+  "simrs_order_id": "ORD-20231015-001",
+  "request_no": "REQ20231015123456",
+  "status": "completed",
+  "patient": {
+    "medical_record_no": "RM-098123",
+    "name": "Budi Santoso",
+    "gender": "L",
+    "birth_date": "1990-05-15"
+  },
+  "results": [
+    {
+      "test_code": "HGB",
+      "test_name": "Hemoglobin",
+      "result_value": "11.5",
+      "unit": "g/dL",
+      "reference": "13.0 - 17.0",
+      "flag": "L",
+      "result_time": "2023-10-15T09:30:00.000Z",
+      "status": "completed"
+    }
+  ]
+}</pre>
+    <div class="alert info">
+      <strong>Catatan:</strong> Kolom <code>flag</code> berisi indikator nilai (misal: "L" untuk Low/Rendah, "H" untuk High/Tinggi). Jika kosong atau null, berarti hasilnya normal.
+    </div>
+
+  </div>
+</body>
+</html>

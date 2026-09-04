@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Alat Mindray BC-11 — GeuLIS</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 { color: #fff; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+    h2 { color: var(--primary); margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { color: #e2e8f0; margin-top: 1.5rem; }
+    p, li { color: var(--text-muted); }
+    strong { color: #e2e8f0; }
+    pre {
+      background: #000;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10b981;
+      border: 1px solid var(--border);
+      font-size: 0.85em;
+      line-height: 1.45;
+    }
+    code {
+      background: #000;
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+    }
+    td code { font-size: 0.85em; }
+    .alert {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid #f59e0b;
+    }
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.1);
+      border-left-color: #ef4444;
+    }
+    .subtitle { color: var(--text-muted); margin-top: -0.5rem; }
+    .toc {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+    }
+    .toc ol { margin: 0.5rem 0; padding-left: 1.2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    ol li, ul li { margin: 0.3rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .footer { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+    .print-btn {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .print-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.2cm; }
+      body { background: #fff; color: #000; padding: 0; }
+      .container {
+        max-width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #000; box-shadow: none; border-radius: 0;
+      }
+      h1 { color: #000; border-bottom-color: #000; }
+      h2 { color: #000; border-bottom-color: #999; page-break-after: avoid; }
+      h3 { color: #000; page-break-after: avoid; }
+      p, li, strong, td, th, .subtitle { color: #000 !important; }
+      a { color: #000; text-decoration: none; }
+      pre {
+        background: #f4f4f4; color: #000; border: 1px solid #bbb;
+        page-break-inside: avoid; font-size: 0.75em;
+      }
+      code { background: #eee; color: #000; }
+      th { background: #e8e8e8 !important; color: #000; }
+      table, tr, img { page-break-inside: avoid; }
+      .toc { background: #f7f7f7; border: 1px solid #bbb; }
+      .toc a { color: #000; }
+      .alert, .alert.info, .alert.danger { background: #f7f7f7 !important; border-left: 4px solid #888; color: #000; }
+      .print-btn, .no-print { display: none !important; }
+      /* mulai Bagian A & B di halaman baru untuk kerapian */
+      div[style*="BAGIAN"], div[style*="background:var(--primary)"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button class="print-btn" onclick="window.print()">🖨️ Cetak</button>
+
+  <h1>Manual Alat — Mindray BC-11</h1>
+  <p class="subtitle">Analyzer hematologi lokasi pemasangan lain · terdaftar di GeuLIS sebagai <code>HTM001</code></p>
+
+  <div class="alert info">
+    <strong>Alat ini bisa menarik identitas pasien dari GeuLIS.</strong>
+    Cukup scan barcode di alat — nama pasien turun otomatis, tanpa mengetik.
+    Lihat bagian 3.
+  </div>
+
+  <div class="toc">
+    <strong>Daftar Isi</strong>
+    <ol>
+      <li><a href="#koneksi">Cara alat terhubung ke GeuLIS</a></li>
+      <li><a href="#setting">Setting di panel alat</a></li>
+      <li><a href="#worklist">Scan barcode &mdash; identitas pasien otomatis</a></li>
+      <li><a href="#harian">Alur kerja harian</a></li>
+      <li><a href="#masalah">Kalau hasil tidak masuk</a></li>
+    </ol>
+  </div>
+
+  <h2 id="koneksi">1. Cara alat terhubung ke GeuLIS</h2>
+  <p><strong>GeuLIS yang menghubungi alat</strong>, bukan sebaliknya. Alat menunggu di portnya sendiri.</p>
+<pre>GeuLIS 192.168.2.253  ──menghubungi──▶  BC-11 192.168.2.244:5100
+                      ◀── detak tiap 3 detik
+                      ◀── hasil pemeriksaan
+                      ◀── permintaan identitas pasien</pre>
+  <table>
+    <tr><th>Item</th><th>Nilai</th></tr>
+    <tr><td>IP alat</td><td><code>192.168.2.244</code></td></tr>
+    <tr><td>Port data</td><td><code>5100</code></td></tr>
+    <tr><td>Server GeuLIS</td><td><code>192.168.2.253</code></td></tr>
+    <tr><td>Protokol</td><td>HL7</td></tr>
+  </table>
+  <div class="alert">
+    <strong>Alat ini tidak menjawab ping.</strong> Kalau petugas IT mengetes dengan
+    <code>ping 192.168.2.244</code> dan gagal, itu <em>bukan</em> berarti alat mati &mdash;
+    alat memang memblokir ping. Pakai menu <strong>Alat</strong> di GeuLIS untuk memastikan.
+  </div>
+
+  <h2 id="setting">2. Setting di panel alat</h2>
+  <p>Menu <strong>Setup → Communication</strong>.</p>
+  <table>
+    <tr><th>Setting</th><th>Nilai</th><th>Catatan</th></tr>
+    <tr><td>Communication</td><td>Network port comm.</td><td>bukan serial</td></tr>
+    <tr><td>IP Address</td><td><code>192.168.2.244</code></td><td>identitas alat</td></tr>
+    <tr><td>Subnet Mask</td><td><code>255.255.255.0</code></td><td></td></tr>
+    <tr><td>Default Gateway</td><td><code>192.168.2.1</code></td><td></td></tr>
+    <tr><td>Comm Protocol</td><td><strong>HL7</strong></td><td></td></tr>
+    <tr><td>ACK Synchronous Transmission</td><td>boleh hidup</td><td>GeuLIS membalas dengan benar</td></tr>
+    <tr><td>Auto Retransmit</td><td>hidup</td><td>kirim ulang bila gagal</td></tr>
+    <tr><td><strong>Auto Communicate</strong></td><td><strong>WAJIB hidup</strong></td><td>tanpa ini hasil tidak dikirim sama sekali</td></tr>
+    <tr><td><strong>Auto Fetch Info From LIS</strong></td><td>hidup</td><td>fitur scan barcode, bagian 3</td></tr>
+    <tr><td>Transmit as Print Bitmap Data</td><td>sebaiknya mati</td><td>tidak dipakai LIS</td></tr>
+    <tr><td>Histogram transmitted as</td><td>Not to be transmitted</td><td>meringankan jaringan</td></tr>
+  </table>
+  <div class="alert danger">
+    <strong>⚠️ Auto Communicate adalah penyebab tersering &ldquo;alat nyambung tapi hasil kosong&rdquo;.</strong><br>
+    Selama mati, alat menyimpan hasil untuk dirinya sendiri dan tidak mengirim apa pun.
+    Jangan tertukar dengan <em>Auto <u>Re</u>transmit</em> yang letaknya di atasnya.
+  </div>
+
+  <h2 id="worklist">3. Scan barcode &mdash; identitas pasien otomatis</h2>
+  <p>
+    Ini keunggulan BC-11 dibanding alat lain di jaringan kita. Ketika petugas
+    memasukkan nomor sampel, alat <strong>bertanya lebih dulu ke GeuLIS</strong>
+    siapa pasiennya, lalu menampilkan namanya di layar alat.
+  </p>
+  <p><strong>Cara pakainya:</strong></p>
+  <ol>
+    <li>Pastikan permintaan lab pasien sudah ada di GeuLIS.</li>
+    <li>Scan barcode tabung di alat (atau ketik nomor sampelnya).</li>
+    <li>Nama pasien muncul sendiri di layar alat.</li>
+    <li>Jalankan sampel seperti biasa &mdash; hasilnya langsung menempel ke order pasien itu.</li>
+  </ol>
+  <div class="alert info">
+    <strong>Kalau nama pasien tidak muncul</strong>, berarti nomor sampel itu belum
+    punya order di GeuLIS. Jangan dipaksakan &mdash; periksa dulu nomornya, karena
+    menjalankan sampel dengan nomor yang salah akan membuat pasien baru di LIS,
+    bukan menempel ke pasien yang benar.
+  </div>
+  <p>
+    Nomor sampel dicocokkan dengan nomor rekam medis, nomor order, nomor permintaan,
+    atau nomor order SIMRS.
+  </p>
+
+  <h2 id="harian">4. Alur kerja harian</h2>
+  <ol>
+    <li>Nyalakan alat, tunggu inisialisasi selesai.</li>
+    <li>Jalankan QC harian sebelum sampel pasien.</li>
+    <li>Untuk tiap sampel: scan barcode &rarr; pastikan nama pasien muncul &rarr; jalankan.</li>
+    <li>Hasil mengalir sendiri ke GeuLIS; cek di menu <strong>Hasil</strong>.</li>
+    <li>Petugas memverifikasi hasil di GeuLIS sebelum dikirim ke SIMRS.</li>
+  </ol>
+  <p>Tidak perlu menekan tombol kirim &mdash; selama <code>Auto Communicate</code> hidup, pengiriman otomatis.</p>
+
+  <h2 id="masalah">5. Kalau hasil tidak masuk</h2>
+  <table>
+    <tr><th>Gejala</th><th>Yang harus diperiksa</th></tr>
+    <tr><td>Alat tersambung tapi hasil tidak pernah datang</td><td><strong>Auto Communicate</strong> mati di alat</td></tr>
+    <tr><td>Nama pasien tidak muncul saat scan</td><td>Permintaan lab belum dibuat di GeuLIS, atau nomor sampel beda</td></tr>
+    <tr><td>Di GeuLIS muncul pasien bernama &ldquo;Pasien &lt;nomor&gt;&rdquo;</td><td>Sampel dijalankan dengan nomor yang tidak terdaftar</td></tr>
+    <tr><td>Menu Alat tidak menunjukkan koneksi</td><td>Alat mati, kabel LAN lepas, atau IP alat berubah</td></tr>
+  </table>
+  <p>
+    Buka menu <strong>Alat</strong> di GeuLIS untuk melihat status koneksi dan seluruh
+    lalu lintas pesan dari alat, termasuk catatan
+    <code>worklist &lt;barcode&gt; -&gt; &lt;nama pasien&gt;</code> tiap kali alat bertanya.
+  </p>
+
+  <hr>
+  <p class="footer">
+    Disusun dari rekaman lalu lintas alat produksi dan protokol komunikasi Mindray,
+    diverifikasi langsung terhadap alat pada 3 September 2026.
+    Dokumen teknis: docs/BC-11.md
+  </p>
+</div>
+
+</body>
+</html>

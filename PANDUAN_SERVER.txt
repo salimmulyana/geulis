@@ -1,0 +1,346 @@
+====================================================================
+               PANDUAN PEMASANGAN & RUNNING GeuLIS DI SERVER
+====================================================================
+
+Prosedur di bawah sudah diuji end-to-end pada Ubuntu 24.04 / Linux
+Mint 22.3 (2026-09-02) dan terverifikasi jalan dari mesin lain.
+
+
+0. PERIKSA SERVER SEBELUM MEMASANG
+--------------------------------------------------------------------
+Jangan menganggap servernya kosong. Pada salah satu pemasangan,
+server ternyata sudah menjalankan LIS lain (OpenELIS Global 2) dengan
+7 container Docker yang menguasai port 80, 443, 8080, 8443, dan 2575.
+
+Selalu periksa lebih dulu:
+
+    ss -ltnp | sort -u          # port yang sudah dipakai
+    sudo docker ps              # container yang berjalan
+    ls -d /var/www/geulis   # pemasangan GeuLIS sebelumnya
+
+Bila ada layanan lain, JANGAN langsung menghapusnya. Periksa dulu
+apakah databasenya berisi data pasien, ambil cadangan, dan pastikan
+ke pemiliknya. Menghentikan container (docker compose down) sudah
+membebaskan port tanpa menghapus volume datanya.
+
+
+1. PERSYARATAN SERVER (PREREQUISITES)
+--------------------------------------------------------------------
+- OS           : Linux Ubuntu Server / Debian (turunannya juga bisa)
+- Node.js      : Versi 18.x atau 20.x+
+- Database     : MySQL / MariaDB
+- Web Server   : Nginx  (WAJIB - lihat catatan penting di bagian 5)
+- Process Mgr  : PM2 (agar backend jalan 24/7 & auto-restart saat reboot)
+
+Install MariaDB dan Nginx:
+
+    sudo apt update
+    sudo apt install -y mariadb-server nginx
+    sudo systemctl enable --now mariadb nginx
+
+>>> PERIKSA VERSI NODE SEBELUM MEMASANGNYA DARI APT <<<
+
+Versi Node di apt bergantung rilis distro, dan yang lama TIDAK cukup:
+
+    Ubuntu 24.04 / Mint 22.x  ->  Node 18.19  (cukup)
+    Ubuntu 22.04 / Mint 21.x  ->  Node 12.22  (TIDAK cukup)
+
+Cek dulu:
+
+    apt-cache policy nodejs | grep Candidate
+
+Kalau kandidatnya di bawah 18, JANGAN pakai apt biasa. Pasang dari
+NodeSource:
+
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt install -y nodejs
+
+Bila Node lama sudah terlanjur terpasang, instalasi NodeSource akan
+GAGAL dengan pesan "trying to overwrite '/usr/include/node/common.gypi',
+which is also in package libnode-dev". Bersihkan sisanya lebih dulu:
+
+    sudo apt purge -y libnode-dev libnode72 nodejs-doc
+    sudo apt autoremove -y
+    sudo apt install -y nodejs
+
+Setelah Node siap, pasang PM2:
+
+    sudo npm install -g pm2
+
+Cek versi (Node harus >= 18):
+
+    node -v && npm -v && pm2 -v
+
+
+2. COPY APLIKASI KE SERVER
+--------------------------------------------------------------------
+Buat direktori aplikasi dan beri kepemilikan ke user biasa (jangan
+jalankan aplikasi sebagai root):
+
+    sudo mkdir -p /var/www/geulis
+    sudo chown -R $USER:$USER /var/www/geulis
+
+Salin dari mesin pengembang (jalankan DI MESIN LOKAL):
+
+    rsync -az --delete \
+      --exclude node_modules --exclude .git \
+      --exclude 'backend/.env' --exclude 'frontend/dist' \
+      ./ user@IP_SERVER:/var/www/geulis/
+
+PENTING: selalu sertakan KEDUA exclude berikut.
+
+--exclude 'backend/.env'
+    Tanpa ini, file .env production (berisi password DB & JWT_SECRET
+    server) tertimpa oleh .env milik mesin lokal.
+
+--exclude 'frontend/dist'
+    Folder dist masuk .gitignore sehingga TIDAK ada di mesin lokal.
+    Digabung dengan --delete, rsync akan MENGHAPUS dist di server
+    dan situs langsung mati (Nginx error 500, log berbunyi
+    "rewrite or internal redirection cycle ... /index.html").
+    Kalau sampai terjadi, perbaikannya: jalankan ulang
+    "cd /var/www/geulis/frontend && npm run build" di server.
+
+
+3. SIAPKAN DATABASE
+--------------------------------------------------------------------
+>>> PILIH BERKAS YANG BENAR <<<
+
+  PEMASANGAN BARU (rumah sakit baru)  ->  database/geulis_fresh.sql
+  Memulihkan dari cadangan          ->  database/dump_contoh.sql
+
+JANGAN memakai database/dump_contoh.sql untuk rumah sakit baru. Berkas itu berisi
+REKAM MEDIS PASIEN rumah sakit yang bersangkutan (nama, no. rekam medis, tanggal
+lahir, 97 hasil pemeriksaan), ditambah API key dan konfigurasi alat
+milik rumah sakit tersebut. Menyalinnya ke server rumah sakit lain
+berarti membocorkan data pasien antar fasilitas.
+
+database/geulis_fresh.sql berisi struktur 17 tabel yang sama plus
+katalog 42 pemeriksaan, roles, permissions, dan settings - tanpa satu
+pun data pasien, alat, atau kredensial.
+
+Kedua berkas TIDAK berisi perintah CREATE DATABASE maupun USE, jadi
+databasenya harus dibuat manual lebih dulu.
+
+a. Buat database dan user khusus aplikasi (jangan pakai root):
+
+    sudo mysql -e "CREATE DATABASE IF NOT EXISTS \`geulis\`
+      CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+
+    # ganti PASSWORD_KUAT dengan hasil: openssl rand -hex 16
+    sudo mysql -e "CREATE USER 'lisapp'@'localhost'
+      IDENTIFIED BY 'PASSWORD_KUAT';"
+    sudo mysql -e "GRANT ALL PRIVILEGES ON \`geulis\`.* TO
+      'lisapp'@'localhost'; FLUSH PRIVILEGES;"
+
+b. Impor struktur & data awal:
+
+    # rumah sakit baru:
+    sudo mysql geulis < /var/www/geulis/database/geulis_fresh.sql
+
+    # memulihkan dari cadangan rumah sakit yang sudah berjalan:
+    # sudo mysql geulis < /var/www/geulis/database/dump_contoh.sql
+
+c. Verifikasi (harus mengembalikan 17):
+
+    sudo mysql -N -e "select count(*) from information_schema.tables
+      where table_schema='geulis';"
+
+
+4. KONFIGURASI BACKEND (.env)
+--------------------------------------------------------------------
+Buat /var/www/geulis/backend/.env :
+
+    PORT=3001
+    JWT_SECRET=<hasil: openssl rand -hex 32>
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_USER=lisapp
+    DB_PASSWORD=<password yang dibuat di langkah 3a>
+    DB_NAME=geulis
+    INSTRUMENT_LISTENER_ENABLED=true
+
+Lalu kunci izin aksesnya:
+
+    chmod 600 /var/www/geulis/backend/.env
+
+JANGAN memakai nilai JWT_SECRET dari .env.example di production.
+Bangkitkan yang acak:  openssl rand -hex 32
+
+Catatan: backend membaca .env HANYA saat start. Setelah mengubahnya,
+wajib  pm2 restart geulis-backend .
+
+
+5. INSTALL DEPENDENSI & BUILD FRONTEND
+--------------------------------------------------------------------
+    cd /var/www/geulis
+    npm run install:all
+    npm run seed --prefix backend      # membuat user admin & lab
+    cd frontend && npm run build       # menghasilkan frontend/dist
+
+>>> CATATAN PENTING SOAL FRONTEND <<<
+Frontend memanggil API lewat path relatif "/api" (lihat
+frontend/src/api.js). Saat development, path itu diteruskan ke
+backend oleh proxy Vite. Proxy tersebut TIDAK ADA pada hasil build
+production, dan backend tidak menyajikan file static.
+
+Akibatnya, menyajikan frontend dengan static server biasa
+(misalnya "pm2 serve frontend/dist 5173 --spa") MENGHASILKAN
+APLIKASI RUSAK: request ke /api akan dibalas index.html, bukan JSON,
+sehingga login gagal.
+
+Karena itu frontend WAJIB disajikan lewat Nginx yang sekaligus
+mem-proxy /api ke backend (bagian 6).
+
+
+6. KONFIGURASI NGINX
+--------------------------------------------------------------------
+Buat file /etc/nginx/sites-available/geulis :
+
+    server {
+        listen 5173;
+        server_name _;
+        root /var/www/geulis/frontend/dist;
+        index index.html;
+
+        location /api/ {
+            proxy_pass http://127.0.0.1:3001;
+            proxy_http_version 1.1;
+            proxy_set_header Host              $host;
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+    }
+
+Aktifkan lalu muat ulang:
+
+    sudo ln -sf /etc/nginx/sites-available/geulis /etc/nginx/sites-enabled/geulis
+    sudo rm -f /etc/nginx/sites-enabled/default
+    sudo nginx -t
+    sudo systemctl restart nginx
+
+Ingin diakses di port 80 sekaligus (tanpa menyebut port di browser)?
+Tambahkan satu baris di bawah "listen 5173;" :
+
+        listen 80;
+
+Pastikan port 80 belum dipakai layanan lain. Cek dengan:
+
+    sudo ss -ltnp | grep ':80 '
+
+
+7. MENJALANKAN BACKEND 24/7 DENGAN PM2
+--------------------------------------------------------------------
+PM2 hanya menjalankan BACKEND. Frontend ditangani Nginx, jadi tidak
+ada proses "lis-frontend".
+
+    cd /var/www/geulis/backend
+    pm2 start src/index.js --name "geulis-backend"
+
+Auto-start saat server restart / reboot:
+
+    pm2 save
+    pm2 startup systemd -u $USER --hp $HOME
+    (jalankan perintah yang ditampilkan oleh pm2 startup bila diminta)
+
+Cek service auto-start sudah aktif:
+
+    systemctl is-enabled pm2-$USER      # harus: enabled
+
+
+8. VERIFIKASI HASIL DEPLOY
+--------------------------------------------------------------------
+Jalankan DARI MESIN LAIN, bukan dari dalam server, supaya sekalian
+menguji firewall dan binding port.
+
+a. API tembus lewat Nginx (harus JSON, BUKAN HTML):
+
+    curl http://IP_SERVER:5173/api/health
+    -> {"status":"ok","service":"GeuLIS"}
+
+   Kalau yang keluar HTML <!DOCTYPE html>, berarti proxy /api belum
+   jalan. Ulangi bagian 6.
+
+b. Halaman web tampil:
+
+    curl -o /dev/null -w "%{http_code}\n" http://IP_SERVER:5173/
+    -> 200
+
+c. Login benar-benar berfungsi (bukti DB & JWT beres):
+
+    curl -X POST http://IP_SERVER:5173/api/auth/login \
+      -H 'Content-Type: application/json' \
+      -d '{"username":"admin","password":"<sandi dari SANDI_AWAL.txt>"}'
+    -> harus mengembalikan {"token":"..."}
+
+PERINGATAN: /api/health tetap membalas 200 walaupun koneksi database
+GAGAL. Jangan jadikan health check sebagai bukti aplikasi sehat --
+selalu uji login seperti langkah (c). Bila DB bermasalah, login akan
+menggantung tanpa respons.
+
+
+9. PROSEDUR UPDATE VERSI BERIKUTNYA
+--------------------------------------------------------------------
+    # dari mesin lokal
+    rsync -az --delete \
+      --exclude node_modules --exclude .git \
+      --exclude 'backend/.env' --exclude 'frontend/dist' \
+      ./ user@IP_SERVER:/var/www/geulis/
+
+    # di server
+    cd /var/www/geulis && npm run install:all
+    cd frontend && npm run build
+    pm2 restart geulis-backend
+
+Nginx tidak perlu disentuh kecuali konfigurasinya ikut berubah.
+Backend menjalankan migrasi skema otomatis saat start, jadi kolom
+baru akan ditambahkan sendiri.
+
+
+10. CEK STATUS & LOG
+--------------------------------------------------------------------
+- Status aplikasi      : pm2 status
+- Log backend realtime : pm2 logs geulis-backend
+- Restart backend      : pm2 restart geulis-backend
+- Stop aplikasi        : pm2 stop all
+- Log & status Nginx   : sudo systemctl status nginx
+                         sudo tail -f /var/log/nginx/error.log
+- Status database      : systemctl is-active mariadb
+
+
+11. ALAMAT AKSES & ALAT LAB
+--------------------------------------------------------------------
+- Web LIS (Browser)    : http://<IP_SERVER>:5173
+- API (internal)       : 127.0.0.1:3001  (tidak perlu diekspos keluar)
+- TCP Port Alat Lab    : <IP_SERVER>:5005  (alat HTM001, protokol ASTM)
+
+Login awal hasil seed:
+    admin / <lihat SANDI_AWAL.txt>   (Administrator)
+    lab   / <sandi dari SANDI_AWAL.txt>       (Petugas Lab)
+
+GANTI KEDUA PASSWORD INI setelah login pertama di server production.
+
+
+12. CATATAN KEAMANAN
+--------------------------------------------------------------------
+Aplikasi ini menyimpan data pasien. Sebelum dipakai sungguhan:
+
+- Ganti password default admin & lab (lihat bagian 11).
+- Pastikan JWT_SECRET acak, bukan nilai dari .env.example.
+- Gunakan user database khusus (lisapp), bukan root MySQL.
+- Jaga .env tetap chmod 600 dan jangan pernah di-commit ke git.
+- Port 3001 tidak perlu terbuka ke jaringan luar; cukup Nginx (5173
+  atau 80) yang diakses pengguna. Batasi dengan firewall, contoh:
+      sudo ufw allow 5173/tcp
+      sudo ufw allow 5005/tcp
+      sudo ufw deny 3001/tcp
+- Gunakan password SSH yang kuat, atau lebih baik autentikasi kunci
+  SSH dan matikan login password.
+- Untuk akses lintas jaringan, letakkan di belakang HTTPS
+  (mis. Nginx + Let's Encrypt), jangan HTTP polos.
+====================================================================

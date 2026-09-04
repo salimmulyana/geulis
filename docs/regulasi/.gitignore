@@ -1,0 +1,3 @@
+# Hasil ekstraksi pdftotext — bisa dibuat ulang kapan saja dengan:
+#   for f in *.pdf; do pdftotext -layout "$f" "${f%.pdf}.txt"; done
+*.txt

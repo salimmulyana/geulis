@@ -1,33 +1,19 @@
+import { rujukanBerlaku, labelRujukan } from './rujukanUmur.js';
+
 /**
- * Hitung flag hasil berdasar nilai rujukan, dengan dukungan
- * rujukan spesifik gender (reference_*_l / reference_*_p).
- * Jika kolom gender kosong, fallback ke reference_min / reference_max.
+ * Tentukan penanda hasil dari rujukan yang SUDAH dipilih.
  *
- * @param {string|number} value
- * @param {object} test  - baris lab_tests
- * @param {'L'|'P'|null} gender
+ * Dipisahkan dari pemilihan rujukan supaya bisa diuji sendiri, dan supaya
+ * pemanggil yang sudah memegang rujukannya tidak perlu membacanya lagi.
  */
-export function calcFlag(value, test, gender) {
+export function flagDariRujukan(value, r) {
   const n = parseFloat(value);
   if (isNaN(n)) return 'abnormal';
 
-  let min = test?.reference_min;
-  let max = test?.reference_max;
-
-  if (gender === 'L') {
-    if (test?.reference_min_l != null) min = test.reference_min_l;
-    if (test?.reference_max_l != null) max = test.reference_max_l;
-  } else if (gender === 'P') {
-    if (test?.reference_min_p != null) min = test.reference_min_p;
-    if (test?.reference_max_p != null) max = test.reference_max_p;
-  }
-
   // Nilai kritis resmi lab bila tersedia. Ini ambang yang menuntut pemberitahuan
   // segera ke dokter, dan angkanya ditetapkan lab — bukan diturunkan dari rujukan.
-  const cMin = test?.critical_min;
-  const cMax = test?.critical_max;
-  if (cMin != null && n <= cMin) return 'critical';
-  if (cMax != null && n >= cMax) return 'critical';
+  if (r?.criticalMin != null && n <= r.criticalMin) return 'critical';
+  if (r?.criticalMax != null && n >= r.criticalMax) return 'critical';
 
   // Di luar rujukan tapi tanpa nilai kritis resmi -> cukup low/high.
   //
@@ -35,8 +21,44 @@ export function calcFlag(value, test, gender) {
   // dibuang: pada hitung jenis leukosit ia menandai LYMPH% 13,2 dan NEUT% 22
   // sebagai kritis, padahal angka itu lazim. Banyak merah palsu justru membuat
   // petugas berhenti menghiraukan yang merah sungguhan. Sekarang "kritis" hanya
-  // muncul bila lab menetapkan ambangnya sendiri di critical_min/critical_max.
-  if (min != null && n < min) return 'low';
-  if (max != null && n > max) return 'high';
+  // muncul bila lab menetapkan ambangnya sendiri.
+  if (r?.min != null && n < r.min) return 'low';
+  if (r?.max != null && n > r.max) return 'high';
   return 'normal';
+}
+
+/**
+ * Hitung penanda hasil beserta rujukan yang dipakai.
+ *
+ * Konteks pasien boleh berupa objek { gender, umurHari, kondisi } atau — untuk
+ * pemanggil lama — sekadar string 'L'/'P'. Bentuk lama sengaja tetap diterima
+ * supaya jalur yang belum sempat meneruskan umur tidak diam-diam menilai setiap
+ * pasien sebagai neonatus; ia cukup kehilangan kekhususan umur, tidak salah.
+ *
+ * @returns {{flag: string, min: number|null, max: number|null, label: string}}
+ */
+export async function nilaiHasil(value, test, konteks) {
+  const k =
+    typeof konteks === 'string' || konteks == null
+      ? { gender: konteks ?? null, umurHari: null, kondisi: null }
+      : konteks;
+
+  const r = await rujukanBerlaku(test, k);
+  return {
+    flag: flagDariRujukan(value, r),
+    min: r.min,
+    max: r.max,
+    label: labelRujukan(r),
+  };
+}
+
+/**
+ * Bentuk lama: hanya mengembalikan penanda.
+ *
+ * Dipertahankan agar pemanggil yang belum dipindahkan tetap bekerja. Perlu
+ * ditunggu (await) karena rujukan kini dibaca dari tabel.
+ */
+export async function calcFlag(value, test, gender) {
+  const { flag } = await nilaiHasil(value, test, gender);
+  return flag;
 }

@@ -1,17 +1,17 @@
 import { Router } from 'express';
 import pool from '../config/db.js';
 import { authenticate, requirePermission, punyaHak } from '../middleware/auth.js';
-import { calcFlag } from '../services/flags.js';
+import { nilaiHasil } from '../services/flags.js';
+import { konteksPasien } from '../services/konteksPasien.js';
 import { simpanRevisi } from '../services/revisiHasil.js';
 import { audit } from '../services/audit.js';
 import { pushRequestResultsToSimrs } from '../services/simrsPush.js';
 
 const router = Router();
 
-async function patientGender(patientId) {
-  const [[p]] = await pool.query('SELECT gender FROM patients WHERE id = ?', [patientId]);
-  return p?.gender ?? null;
-}
+// Konteks pasien (jenis kelamin + umur) diambil lewat pembantu bersama, supaya
+// jalur ini menilai dengan cara yang sama seperti jalur alat dan jalur
+// pencocokan ulang.
 
 /** Cari request+item aktif untuk pasien+tes agar hasil terhubung ke order */
 async function findRequestLink(patientId, testId, preferItemId) {
@@ -157,9 +157,9 @@ router.post('/', authenticate, requirePermission('results.manage'), async (req, 
 
   const [[test]] = await pool.query('SELECT * FROM lab_tests WHERE id = ?', [test_id]);
   if (!test) return res.status(400).json({ error: 'Pemeriksaan tidak dikenal' });
-  const gender = await patientGender(patient_id);
+  const konteks = await konteksPasien(patient_id);
   const numeric = parseFloat(result_value);
-  const flag = calcFlag(result_value, test, gender);
+  const { flag, min: refMin, max: refMax, label: refLabel } = await nilaiHasil(result_value, test, konteks);
   const link = await findRequestLink(patient_id, test_id, request_item_id);
   const [r] = await pool.query(
     `INSERT INTO lab_results (request_item_id, request_id, patient_id, test_id, result_value, result_numeric, unit, flag, instrument_id, verified_by)
@@ -193,9 +193,9 @@ router.post('/batch', authenticate, requirePermission('results.manage'), async (
   for (const item of results) {
     const { patient_id, test_id, request_item_id, result_value, unit, instrument_id, is_printable } = item;
     const [[test]] = await pool.query('SELECT * FROM lab_tests WHERE id = ?', [test_id]);
-    const gender = await patientGender(patient_id);
+    const konteks = await konteksPasien(patient_id);
     const numeric = parseFloat(result_value);
-    const flag = calcFlag(result_value, test, gender);
+    const { flag, min: refMin, max: refMax, label: refLabel } = await nilaiHasil(result_value, test, konteks);
     const link = await findRequestLink(patient_id, test_id, request_item_id);
 
     const [[existingResult]] = await pool.query(
@@ -220,6 +220,17 @@ router.post('/batch', authenticate, requirePermission('results.manage'), async (
       await pool.query(
         `UPDATE lab_results
          SET result_value=?, result_numeric=?, unit=?, flag=?, verified_by=?, is_printable=?,
+             ref_min_dipakai=?, ref_max_dipakai=?, rujukan_label=?,
+             -- Nilai berubah => KEDUA tanda tangan gugur.
+             --
+             -- Kalau hanya pengesahan yang gugur, hasil tetap tampak
+             -- terverifikasi padahal angkanya sudah bukan angka yang diperiksa
+             -- analis. Kalau tidak ada yang gugur, tanda tangan itu melekat
+             -- pada angka yang tidak pernah dilihat penandatangannya.
+             status = CASE WHEN result_value <=> ? THEN status ELSE 'preliminary' END,
+             verified_at = CASE WHEN result_value <=> ? THEN verified_at ELSE NULL END,
+             authorized_by = CASE WHEN result_value <=> ? THEN authorized_by ELSE NULL END,
+             authorized_at = CASE WHEN result_value <=> ? THEN authorized_at ELSE NULL END,
              request_id=COALESCE(request_id, ?), request_item_id=COALESCE(request_item_id, ?)
          WHERE id=?`,
         [
@@ -229,6 +240,13 @@ router.post('/batch', authenticate, requirePermission('results.manage'), async (
           flag,
           req.user.id,
           is_printable ?? 1,
+          refMin,
+          refMax,
+          refLabel || null,
+          result_value,
+          result_value,
+          result_value,
+          result_value,
           link.request_id,
           link.request_item_id,
           existingResult.id,
@@ -291,7 +309,7 @@ router.post('/from-instrument', authenticate, requirePermission('results.manage'
     );
     if (!map) continue;
     const [[test]] = await pool.query('SELECT * FROM lab_tests WHERE id = ?', [map.test_id]);
-    const flag = calcFlag(item.value, test, patient.gender);
+    const { flag } = await nilaiHasil(item.value, test, await konteksPasien(patient.id));
     const link = await findRequestLink(patient.id, map.test_id);
 
     const [[existingResult]] = await pool.query(
@@ -306,6 +324,14 @@ router.post('/from-instrument', authenticate, requirePermission('results.manage'
       await pool.query(
         `UPDATE lab_results
          SET result_value=?, result_numeric=?, unit=?, flag=?, instrument_id=?, raw_message=?,
+             -- Kiriman ulang dari alat juga menggugurkan tanda tangan bila
+             -- angkanya berbeda. Alat yang mengirim ulang nilai yang SAMA
+             -- (hal biasa) tidak boleh membatalkan verifikasi yang sah.
+             status = CASE WHEN result_value <=> ? THEN status ELSE 'preliminary' END,
+             verified_by = CASE WHEN result_value <=> ? THEN verified_by ELSE NULL END,
+             verified_at = CASE WHEN result_value <=> ? THEN verified_at ELSE NULL END,
+             authorized_by = CASE WHEN result_value <=> ? THEN authorized_by ELSE NULL END,
+             authorized_at = CASE WHEN result_value <=> ? THEN authorized_at ELSE NULL END,
              request_id=COALESCE(request_id, ?)
          WHERE id=?`,
         [
@@ -315,6 +341,11 @@ router.post('/from-instrument', authenticate, requirePermission('results.manage'
           flag,
           instrument_id,
           JSON.stringify(item),
+          item.value,
+          item.value,
+          item.value,
+          item.value,
+          item.value,
           link.request_id,
           existingResult.id,
         ]
@@ -351,6 +382,76 @@ router.patch('/:id/verify', authenticate, requirePermission('results.manage'), a
   );
   await audit(req, 'VERIFY', 'result', req.params.id);
   res.json({ ok: true });
+});
+
+/**
+ * Verifikasi banyak lembar sekaligus.
+ *
+ * Dokter yang memverifikasi tiga puluh lembar normal satu per satu akan berhenti
+ * membacanya sekitar lembar kesepuluh. Memverifikasi sekaligus bukan kemalasan —
+ * itu mengakui bahwa perhatian manusia terbatas, dan mengarahkannya ke lembar
+ * yang memang perlu dilihat.
+ *
+ * Karena itu yang berpenanda kritis, abnormal, atau delta mencurigakan
+ * DIKELUARKAN dari verifikasi massal secara bawaan. Justru lembar itulah alasan
+ * verifikasi ada. Bisa dipaksa, tetapi harus disengaja dan tercatat.
+ */
+router.post('/verify-batch', authenticate, requirePermission('results.manage'), async (req, res) => {
+  const { request_ids, sertakan_perlu_perhatian } = req.body || {};
+  if (!Array.isArray(request_ids) || request_ids.length === 0) {
+    return res.status(400).json({ error: 'request_ids harus berupa array berisi minimal satu order' });
+  }
+  if (request_ids.length > 200) {
+    return res.status(400).json({ error: 'Maksimal 200 order sekali jalan' });
+  }
+
+  const tanda = ['critical', 'abnormal'];
+  const [perluPerhatian] = await pool.query(
+    `SELECT r.request_id, r.id, r.flag, r.delta_flag, t.code AS test_code, r.result_value,
+            p.name AS patient_name
+       FROM lab_results r
+       JOIN lab_tests t ON t.id = r.test_id
+       JOIN patients p ON p.id = r.patient_id
+      WHERE r.request_id IN (?) AND r.status = 'preliminary'
+        AND (r.flag IN (?) OR r.delta_flag = 'check')`,
+    [request_ids, tanda]
+  );
+
+  const dikecualikan = new Set(perluPerhatian.map((x) => x.request_id));
+  const diproses = sertakan_perlu_perhatian
+    ? request_ids
+    : request_ids.filter((id) => !dikecualikan.has(Number(id)) && !dikecualikan.has(String(id)));
+
+  if (diproses.length === 0) {
+    return res.json({
+      terverifikasi: 0,
+      order_diproses: 0,
+      perlu_perhatian: perluPerhatian,
+      catatan: 'Semua order yang dipilih memuat hasil yang perlu dilihat satu per satu.',
+    });
+  }
+
+  const [r] = await pool.query(
+    "UPDATE lab_results SET status='final', verified_by=?, verified_at=NOW() WHERE request_id IN (?) AND status='preliminary'",
+    [req.user.id, diproses]
+  );
+  await pool.query(
+    "UPDATE lab_requests SET status='completed', completed_at=NOW() WHERE id IN (?)",
+    [diproses]
+  ).catch(() => {});
+
+  await audit(req, 'VERIFY_BATCH', 'result', 0, {
+    order_diproses: diproses.length,
+    terverifikasi: r.affectedRows,
+    dikecualikan: [...dikecualikan],
+    dipaksa: !!sertakan_perlu_perhatian,
+  });
+
+  res.json({
+    terverifikasi: r.affectedRows,
+    order_diproses: diproses.length,
+    perlu_perhatian: sertakan_perlu_perhatian ? [] : perluPerhatian,
+  });
 });
 
 // #1 + #5 Verifikasi semua hasil satu order, lalu push ke SIMRS

@@ -2,7 +2,8 @@ import { Router } from 'express';
 import pool from '../config/db.js';
 import { authenticate, requirePermission } from '../middleware/auth.js';
 import { audit } from '../services/audit.js';
-import { calcFlag } from '../services/flags.js';
+import { nilaiHasil } from '../services/flags.js';
+import { konteksPasien } from '../services/konteksPasien.js';
 import { hitungDelta } from '../services/deltaCheck.js';
 import { pastikanTes } from '../services/pemetaanTes.js';
 
@@ -78,7 +79,7 @@ router.post('/:id/match', authenticate, requirePermission('results.manage'), asy
     if (!testId) continue;
 
     const [[test]] = await pool.query('SELECT * FROM lab_tests WHERE id = ?', [testId]);
-    const flag = calcFlag(item.value, test, pasien.gender);
+    const { flag } = await nilaiHasil(item.value, test, await konteksPasien(pasien.id));
     const delta = await hitungDelta(pasien.id, testId, item.value, test?.code, test?.delta_limit_percent);
     const numeric = parseFloat(item.value);
 

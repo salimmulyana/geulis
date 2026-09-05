@@ -1,7 +1,8 @@
 import net from 'net';
 import pool from '../config/db.js';
 import { parseInstrumentMessage, buildAstmOrder, buildAstmNoOrder, buildHl7Ack, buildHl7OrderResponse } from './protocolParsers.js';
-import { calcFlag } from './flags.js';
+import { nilaiHasil } from './flags.js';
+import { konteksPasien } from './konteksPasien.js';
 import { simpanHasilQc } from './qc.js';
 import { hitungDelta } from './deltaCheck.js';
 
@@ -198,7 +199,7 @@ async function saveInstrumentResults(instrumentId, protocol, sampleId, results, 
     if (!testId) continue;
 
     const [[test]] = await pool.query('SELECT * FROM lab_tests WHERE id = ?', [testId]);
-    const flag = calcFlag(item.value, test, patientGender);
+    const { flag } = await nilaiHasil(item.value, test, await konteksPasien(patientId));
     const link = await findRequestLink(patientId, testId);
     // Dihitung sebelum baris baru masuk, supaya pembandingnya benar-benar hasil
     // sebelumnya dan bukan hasil ini sendiri.

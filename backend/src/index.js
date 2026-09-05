@@ -18,6 +18,23 @@ import qcRoutes from './routes/qc.js';
 import pmeRoutes from './routes/pme.js';
 import unmatchedRoutes from './routes/unmatched.js';
 import auditRoutes from './routes/audit.js';
+import rujukanRoutes from './routes/rujukan.js';
+import verifSpesimenRoutes from './routes/verifSpesimen.js';
+import duploRoutes from './routes/duplo.js';
+import naratifRoutes from './routes/naratif.js';
+import laporanRekapRoutes from './routes/laporanRekap.js';
+import bankDarahRoutes from './routes/bankDarah.js';
+import mikrobiologiRoutes from './routes/mikrobiologi.js';
+import monitoringRoutes from './routes/monitoring.js';
+import pengesahanRoutes from './routes/pengesahan.js';
+import pindaiRoutes from './routes/pindai.js';
+import laporanRoutes from './routes/laporan.js';
+import reagenRoutes from './routes/reagen.js';
+import konteksVerifikasiRoutes from './routes/konteksVerifikasi.js';
+import loincRoutes from './routes/loinc.js';
+import interpretasiRoutes from './routes/interpretasi.js';
+import portalRoutes from './routes/portal.js';
+import ttdRoutes, { rutePublik as ttdPublik } from './routes/ttdRoute.js';
 import { startInstrumentListeners } from './services/instrumentListener.js';
 import { ensureSeed } from './ensureSeed.js';
 import { ensureSchema } from './ensureSchema.js';
@@ -67,6 +84,33 @@ app.use('/api/qc', qcRoutes);
 app.use('/api/pme', pmeRoutes);
 app.use('/api/unmatched', unmatchedRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/rujukan', rujukanRoutes);
+app.use('/api/verif-spesimen', verifSpesimenRoutes);
+app.use('/api/duplo', duploRoutes);
+app.use('/api/naratif', naratifRoutes);
+app.use('/api/laporan/rekap', laporanRekapRoutes);
+app.use('/api/bank-darah', bankDarahRoutes);
+app.use('/api/mikrobiologi', mikrobiologiRoutes);
+app.use('/api/dashboard/monitoring', monitoringRoutes);
+app.use('/api/pengesahan', pengesahanRoutes);
+app.use('/api/pindai', pindaiRoutes);
+app.use('/api/laporan', laporanRoutes);
+app.use('/api/reagen', reagenRoutes);
+app.use('/api/konteks-verifikasi', konteksVerifikasiRoutes);
+app.use('/api/loinc', loincRoutes);
+app.use('/api/interpretasi', interpretasiRoutes);
+app.use('/api/portal', portalRoutes);
+app.use('/api/ttd', ttdRoutes);
+
+// Verifikasi QR, publik dan tanpa login.
+//
+// DIPASANG DI BAWAH /api, bukan di /verifikasi. Alamat /verifikasi/<kode>
+// adalah HALAMAN yang dibuka saat QR dipindai, dan halaman itu disajikan
+// frontend. Bila backend juga memakai alamat yang sama, permintaan dari
+// peramban jatuh ke SPA dan mengembalikan index.html alih-alih JSON — QR
+// terlihat berfungsi saat diuji dengan curl langsung ke backend, lalu gagal
+// diam-diam begitu dipakai orang.
+app.use('/api/verifikasi', ttdPublik);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

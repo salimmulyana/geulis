@@ -2,6 +2,8 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { usePemindai } from '../hooks/usePemindai';
+import { api } from '../api';
 
 // Versi dan tautan kode sumber yang ditampilkan di sidebar.
 //
@@ -20,6 +22,13 @@ const MENU = [
   { key: 'users', path: '/users', label: 'User & Hak Akses', icon: '🔐' },
   { key: 'instruments', path: '/instruments', label: 'Alat Laboratorium', icon: '⚙️' },
   { key: 'results', path: '/unmatched', label: 'Hasil Belum Cocok', icon: '📥' },
+  { key: 'instruments', path: '/nilai-rujukan', label: 'Nilai Rujukan', icon: '📐' },
+  { key: 'results', path: '/verif-spesimen', label: 'Verifikasi Spesimen', icon: '🧫' },
+  { key: 'results', path: '/duplo', label: 'Pemeriksaan Duplo', icon: '👯' },
+  { key: 'results', path: '/naratif', label: 'Hasil Naratif', icon: '📝' },
+  { key: 'instruments', path: '/bank-darah', label: 'Bank Darah (BDRS)', icon: '🩸' },
+  { key: 'instruments', path: '/mikrobiologi', label: 'Mikrobiologi Kultur', icon: '🦠' },
+  { key: 'instruments', path: '/laporan-rekap', label: 'Laporan Rekap', icon: '📈' },
   { key: 'instruments', path: '/qc', label: 'Kontrol Mutu', icon: '🎯' },
   { key: 'instruments', path: '/pme', label: 'Mutu Eksternal', icon: '🏅' },
 ];
@@ -38,6 +47,38 @@ export default function Layout() {
   const { user, logout, hasMenu } = useAuth();
   const navigate = useNavigate();
   const items = MENU.filter((m) => hasMenu(m.key));
+
+  // Pindaian barcode berlaku di seluruh aplikasi, bukan hanya di satu halaman.
+  // Petugas memindai sambil memegang tabung; menuntutnya membuka halaman yang
+  // benar lebih dulu menghapus keuntungan memindai sama sekali.
+  usePemindai(async (kode) => {
+    try {
+      const h = await api.pindai(kode);
+      if (h.jenis === 'order') {
+        navigate(`/results?request_id=${h.id}&patient_id=${h.patient_id}`);
+        return;
+      }
+      // Pasien dengan lebih dari satu order terbuka: JANGAN ditebak. Memilihkan
+      // salah satu berarti menebak tabung mana yang dipegang petugas, dan
+      // tebakan yang salah memasukkan hasil ke order yang keliru tanpa gejala.
+      const pilih = await Swal.fire({
+        title: h.pasien.name,
+        text: `Ada ${h.orders.length} order terbuka. Pilih yang sesuai tabung di tangan Anda.`,
+        input: 'select',
+        inputOptions: Object.fromEntries(
+          h.orders.map((o) => [o.id, `${o.request_no} · ${new Date(o.requested_at).toLocaleString('id-ID')}`])
+        ),
+        showCancelButton: true,
+        confirmButtonText: 'Buka',
+        cancelButtonText: 'Batal',
+      });
+      if (pilih.isConfirmed && pilih.value) {
+        navigate(`/results?request_id=${pilih.value}&patient_id=${h.pasien.id}`);
+      }
+    } catch (err) {
+      Swal.fire({ icon: 'warning', title: 'Barcode tidak dikenal', text: err.message });
+    }
+  });
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (window.innerWidth < 768) return false;
     const saved = localStorage.getItem('sidebar_open');

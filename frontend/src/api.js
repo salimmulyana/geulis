@@ -27,6 +27,45 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+    verifSpesimen: {
+      cari: (kode) => request(`/verif-spesimen?kode=${encodeURIComponent(kode)}`),
+      simpan: (id, body) => request(`/verif-spesimen/${id}`, { method: 'POST', body: JSON.stringify(body) }),
+    },
+    duplo: {
+      cari: (kode) => request(`/duplo?kode=${encodeURIComponent(kode)}`),
+      simpan: (id, nilai) => request(`/duplo/${id}`, { method: 'POST', body: JSON.stringify({ nilai }) }),
+    },
+    naratif: {
+      template: () => request('/naratif/template'),
+      ambil: (reqId) => request(`/naratif/${reqId}`),
+      simpan: (reqId, jenis, isi) => request(`/naratif/${reqId}`, { method: 'PUT', body: JSON.stringify({ jenis, isi }) }),
+      verifikasi: (reqId, jenis) => request(`/naratif/${reqId}/verifikasi`, { method: 'POST', body: JSON.stringify({ jenis }) }),
+    },
+    laporanRekap: (jenis, dari, sampai) => request(`/laporan/rekap?jenis=${jenis}&dari=${dari}&sampai=${sampai}`),
+    monitoring: () => request('/dashboard/monitoring'),
+    pindaiKode: (kode) => request(`/verif-spesimen?kode=${encodeURIComponent(kode)}`),
+    bankDarah: {
+      stok: (status='tersedia') => request(`/bank-darah/stok?status=${status}`),
+      tambahStok: (b) => request('/bank-darah/stok', { method: 'POST', body: JSON.stringify(b) }),
+      permintaan: () => request('/bank-darah/permintaan'),
+      buatPermintaan: (b) => request('/bank-darah/permintaan', { method: 'POST', body: JSON.stringify(b) }),
+      crossmatch: (b) => request('/bank-darah/crossmatch', { method: 'POST', body: JSON.stringify(b) }),
+      crossmatchList: (id) => request(`/bank-darah/crossmatch/${id}`),
+      reaksi: () => request('/bank-darah/reaksi'),
+      buatReaksi: (b) => request('/bank-darah/reaksi', { method: 'POST', body: JSON.stringify(b) }),
+    },
+    mikro: {
+      organisme: () => request('/mikrobiologi/organisme'),
+      antibiotik: () => request('/mikrobiologi/antibiotik'),
+      kulturList: () => request('/mikrobiologi/kultur'),
+      kulturBuat: (b) => request('/mikrobiologi/kultur', { method: 'POST', body: JSON.stringify(b) }),
+      kulturAmbil: (id) => request(`/mikrobiologi/kultur/${id}`),
+      pertumbuhan: (id, b) => request(`/mikrobiologi/kultur/${id}/pertumbuhan`, { method: 'POST', body: JSON.stringify(b) }),
+      simpanAst: (id, b) => request(`/mikrobiologi/kultur/${id}/ast`, { method: 'POST', body: JSON.stringify(b) }),
+      hapusAst: (astId) => request(`/mikrobiologi/ast/${astId}`, { method: 'DELETE' }),
+      verifikasi: (id) => request(`/mikrobiologi/kultur/${id}/verifikasi`, { method: 'POST' }),
+    },
+
   login: (body) => request('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   me: () => request('/auth/me'),
   dashboard: () => request('/dashboard/stats'),
@@ -53,6 +92,7 @@ export const api = {
     remove: (id) => request(`/requests/${id}`, { method: 'DELETE' }),
   },
   results: {
+      verifyBatch: (body) => request('/results/verify-batch', { method: 'POST', body: JSON.stringify(body) }),
     list: (patientId) => request(`/results${patientId ? `?patient_id=${patientId}` : ''}`),
     groups: (q, startDate, endDate) => {
       const params = new URLSearchParams();
